@@ -75,16 +75,6 @@
             0%, 100% { box-shadow: 0 0 5px rgba(234, 179, 8, 0.5); }
             50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.8); }
         }
-        .ticker-scroll {
-            animation: ticker 30s linear infinite;
-        }
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .table-row:hover {
-            background: rgba(234, 179, 8, 0.1);
-        }
         .nav-item {
             transition: all 0.3s ease;
         }
@@ -95,15 +85,6 @@
         .nav-item.active {
             color: #eab308;
             border-bottom: 2px solid #eab308;
-        }
-        .price-up {
-            color: #22c55e;
-        }
-        .price-down {
-            color: #ef4444;
-        }
-        .price-flat {
-            color: #94a3b8;
         }
         ::-webkit-scrollbar {
             width: 6px;
@@ -117,6 +98,10 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #64748b;
+        }
+        .tradingview-widget-container {
+            border-radius: 12px;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -135,149 +120,127 @@
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="#" class="nav-item active text-sm font-medium">首页</a>
-                    <a href="#" class="nav-item text-sm font-medium text-slate-400">实时行情</a>
-                    <a href="#" class="nav-item text-sm font-medium text-slate-400">智能分析</a>
-                    <a href="#" class="nav-item text-sm font-medium text-slate-400">交易信号</a>
-                    <a href="#" class="nav-item text-sm font-medium text-slate-400">持仓管理</a>
-                    <a href="#" class="nav-item text-sm font-medium text-slate-400">智能提醒</a>
+                    <a href="#chart" class="nav-item text-sm font-medium text-slate-400">实时图表</a>
+                    <a href="#analysis" class="nav-item text-sm font-medium text-slate-400">技术分析</a>
+                    <a href="#news" class="nav-item text-sm font-medium text-slate-400">市场资讯</a>
                 </nav>
                 <div class="flex items-center space-x-3">
-                    <span class="text-xs text-slate-500">模拟数据</span>
                     <div class="w-2 h-2 rounded-full bg-green-500 pulse-gold"></div>
-                    <span class="text-xs text-green-400">交易中</span>
+                    <span class="text-xs text-green-400">实时数据</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Market Ticker -->
-    <div class="bg-dark-800/50 border-b border-slate-700/50 py-2 overflow-hidden">
-        <div class="ticker-scroll flex items-center space-x-8 whitespace-nowrap">
-            <span class="text-sm">
-                <span class="text-slate-400">XAU/USD</span>
-                <span class="ml-2 font-mono">2,326.50</span>
-                <span class="ml-1 price-up">+0.85%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">XAG/USD</span>
-                <span class="ml-2 font-mono">28.42</span>
-                <span class="ml-1 price-up">+1.23%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">EUR/USD</span>
-                <span class="ml-2 font-mono">1.0845</span>
-                <span class="ml-1 price-down">-0.12%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">USD/JPY</span>
-                <span class="ml-2 font-mono">157.82</span>
-                <span class="ml-1 price-up">+0.35%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">美元指数</span>
-                <span class="ml-2 font-mono">104.25</span>
-                <span class="ml-1 price-down">-0.28%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">布伦特原油</span>
-                <span class="ml-2 font-mono">83.45</span>
-                <span class="ml-1 price-up">+0.67%</span>
-            </span>
-            <!-- Duplicate for seamless loop -->
-            <span class="text-sm">
-                <span class="text-slate-400">XAU/USD</span>
-                <span class="ml-2 font-mono">2,326.50</span>
-                <span class="ml-1 price-up">+0.85%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">XAG/USD</span>
-                <span class="ml-2 font-mono">28.42</span>
-                <span class="ml-1 price-up">+1.23%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">EUR/USD</span>
-                <span class="ml-2 font-mono">1.0845</span>
-                <span class="ml-1 price-down">-0.12%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">USD/JPY</span>
-                <span class="ml-2 font-mono">157.82</span>
-                <span class="ml-1 price-up">+0.35%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">美元指数</span>
-                <span class="ml-2 font-mono">104.25</span>
-                <span class="ml-1 price-down">-0.28%</span>
-            </span>
-            <span class="text-sm">
-                <span class="text-slate-400">布伦特原油</span>
-                <span class="ml-2 font-mono">83.45</span>
-                <span class="ml-1 price-up">+0.67%</span>
-            </span>
-        </div>
+    <!-- TradingView Ticker Tape Widget -->
+    <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+            "symbols": [
+                {"proName": "OANDA:XAUUSD", "title": "现货黄金"},
+                {"proName": "OANDA:XAGUSD", "title": "现货白银"},
+                {"proName": "FX:EURUSD", "title": "欧元/美元"},
+                {"proName": "FX:USDJPY", "title": "美元/日元"},
+                {"proName": "TVC:DXY", "title": "美元指数"},
+                {"proName": "TVC:USOIL", "title": "WTI原油"}
+            ],
+            "showSymbolLogo": true,
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "displayMode": "adaptive",
+            "locale": "zh_CN"
+        }
+        </script>
     </div>
 
     <main class="max-w-7xl mx-auto px-4 py-6">
-        <!-- Search & Time -->
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 space-y-4 md:space-y-0">
-            <div class="relative w-full md:w-96">
-                <input type="text" placeholder="搜索贵金属品种..." class="w-full glass-light rounded-lg px-4 py-2.5 pl-10 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50">
-                <svg class="w-4 h-4 text-slate-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </div>
-            <div class="flex items-center space-x-4 text-xs text-slate-500">
-                <span>纽约 06:12:35</span>
-                <span>|</span>
-                <span>北京 18:12:35</span>
-                <span>|</span>
-                <span>伦敦 11:12:35</span>
+        <!-- Market Overview - TradingView Symbol Overview Widget -->
+        <div class="mb-6">
+            <div class="glass rounded-xl p-5 gold-glow">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-slate-400 text-sm">现货黄金 XAU/USD</span>
+                        <span class="ml-2 text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">热门</span>
+                    </div>
+                    <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-xs text-slate-500 hover:text-yellow-400 transition-colors">
+                        查看完整图表 →
+                    </a>
+                </div>
+                <!-- TradingView Mini Chart Widget -->
+                <div class="tradingview-widget-container" style="height: 200px;">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    {
+                        "symbol": "OANDA:XAUUSD",
+                        "width": "100%",
+                        "height": "100%",
+                        "locale": "zh_CN",
+                        "dateRange": "1D",
+                        "colorTheme": "dark",
+                        "isTransparent": true,
+                        "autosize": true,
+                        "largeChartUrl": "https://cn.tradingview.com/symbols/XAUUSD/"
+                    }
+                    </script>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span>数据来源: TradingView</span>
+                    <span id="updateTime">更新时间: --</span>
+                </div>
             </div>
         </div>
 
-        <!-- Market Overview Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="glass rounded-xl p-5 gold-glow">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-slate-400 text-sm">现货黄金 XAU/USD</span>
-                    <span class="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">热门</span>
-                </div>
-                <div class="text-3xl font-bold font-mono gold-text">2,326.50</div>
-                <div class="flex items-center mt-2 space-x-3">
-                    <span class="price-up text-sm font-medium">+19.50 (+0.85%)</span>
-                    <span class="text-xs text-slate-500">今开: 2,307.00</span>
-                </div>
-                <div class="flex items-center mt-1 space-x-3 text-xs text-slate-500">
-                    <span>最高: 2,332.80</span>
-                    <span>最低: 2,302.15</span>
-                </div>
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="glass-light rounded-xl p-4">
+                <div class="text-xs text-slate-400 mb-1">成交量</div>
+                <div class="text-lg font-bold font-mono">312.27K</div>
+                <div class="text-xs text-slate-500">ticks</div>
             </div>
-            <div class="glass rounded-xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-slate-400 text-sm">现货白银 XAG/USD</span>
-                </div>
-                <div class="text-3xl font-bold font-mono text-slate-100">28.42</div>
-                <div class="flex items-center mt-2 space-x-3">
-                    <span class="price-up text-sm font-medium">+0.35 (+1.23%)</span>
-                    <span class="text-xs text-slate-500">今开: 28.07</span>
-                </div>
-                <div class="flex items-center mt-1 space-x-3 text-xs text-slate-500">
-                    <span>最高: 28.58</span>
-                    <span>最低: 27.95</span>
-                </div>
+            <div class="glass-light rounded-xl p-4">
+                <div class="text-xs text-slate-400 mb-1">前收盘</div>
+                <div class="text-lg font-bold font-mono">4,709.75</div>
+                <div class="text-xs text-slate-500">USD</div>
             </div>
+            <div class="glass-light rounded-xl p-4">
+                <div class="text-xs text-slate-400 mb-1">开盘价</div>
+                <div class="text-lg font-bold font-mono">4,696.88</div>
+                <div class="text-xs text-slate-500">USD</div>
+            </div>
+            <div class="glass-light rounded-xl p-4">
+                <div class="text-xs text-slate-400 mb-1">当日范围</div>
+                <div class="text-sm font-bold font-mono">4,672.41 - 4,729.97</div>
+                <div class="text-xs text-slate-500">USD</div>
+            </div>
+        </div>
+
+        <!-- Main Chart -->
+        <div id="chart" class="mb-6">
             <div class="glass rounded-xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-slate-400 text-sm">美元指数 DXY</span>
-                </div>
-                <div class="text-3xl font-bold font-mono text-slate-100">104.25</div>
-                <div class="flex items-center mt-2 space-x-3">
-                    <span class="price-down text-sm font-medium">-0.29 (-0.28%)</span>
-                    <span class="text-xs text-slate-500">今开: 104.54</span>
-                </div>
-                <div class="flex items-center mt-1 space-x-3 text-xs text-slate-500">
-                    <span>最高: 104.68</span>
-                    <span>最低: 104.12</span>
+                <h3 class="font-semibold text-slate-200 mb-4">实时图表</h3>
+                <!-- TradingView Advanced Chart Widget -->
+                <div class="tradingview-widget-container" style="height: 500px;">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                    {
+                        "autosize": true,
+                        "symbol": "OANDA:XAUUSD",
+                        "interval": "60",
+                        "timezone": "Asia/Shanghai",
+                        "theme": "dark",
+                        "style": "1",
+                        "locale": "zh_CN",
+                        "backgroundColor": "rgba(30, 41, 59, 0.7)",
+                        "gridColor": "rgba(148, 163, 184, 0.1)",
+                        "hide_top_toolbar": false,
+                        "hide_legend": false,
+                        "save_image": false,
+                        "allow_symbol_change": true,
+                        "calendar": false,
+                        "support_host": "https://www.tradingview.com"
+                    }
+                    </script>
                 </div>
             </div>
         </div>
@@ -285,198 +248,63 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Gainers Table -->
-                <div class="glass rounded-xl overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-700/50">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-lg">📈</span>
-                            <h3 class="font-semibold text-slate-200">今日涨幅榜</h3>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="text-slate-400 border-b border-slate-700/50">
-                                    <th class="text-left px-5 py-3 font-medium">品种</th>
-                                    <th class="text-right px-5 py-3 font-medium">最新价</th>
-                                    <th class="text-right px-5 py-3 font-medium">涨跌幅</th>
-                                    <th class="text-right px-5 py-3 font-medium hidden md:table-cell">成交量</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-yellow-400">Au</span>
-                                            <span class="font-medium">现货黄金</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">2,326.50</td>
-                                    <td class="text-right px-5 py-3 price-up font-medium">+0.85%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">186,520</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-gray-300">Ag</span>
-                                            <span class="font-medium">现货白银</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">28.42</td>
-                                    <td class="text-right px-5 py-3 price-up font-medium">+1.23%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">142,380</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-yellow-600">Pt</span>
-                                            <span class="font-medium">铂金</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">952.30</td>
-                                    <td class="text-right px-5 py-3 price-up font-medium">+0.67%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">28,450</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-yellow-700">Pd</span>
-                                            <span class="font-medium">钯金</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">985.60</td>
-                                    <td class="text-right px-5 py-3 price-up font-medium">+0.52%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">15,280</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-orange-400">Cu</span>
-                                            <span class="font-medium">铜</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">4.52</td>
-                                    <td class="text-right px-5 py-3 price-up font-medium">+0.45%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">95,670</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Technical Analysis Widget -->
+                <div id="analysis" class="glass rounded-xl p-5">
+                    <h3 class="font-semibold text-slate-200 mb-4">技术分析</h3>
+                    <!-- TradingView Technical Analysis Widget -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        {
+                            "interval": "1h",
+                            "width": "100%",
+                            "isTransparent": true,
+                            "height": "450",
+                            "symbol": "OANDA:XAUUSD",
+                            "showIntervalTabs": true,
+                            "displayMode": "single",
+                            "locale": "zh_CN",
+                            "colorTheme": "dark"
+                        }
+                        </script>
                     </div>
                 </div>
 
-                <!-- Losers Table -->
-                <div class="glass rounded-xl overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-700/50">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-lg">📉</span>
-                            <h3 class="font-semibold text-slate-200">今日跌幅榜</h3>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="text-slate-400 border-b border-slate-700/50">
-                                    <th class="text-left px-5 py-3 font-medium">品种</th>
-                                    <th class="text-right px-5 py-3 font-medium">最新价</th>
-                                    <th class="text-right px-5 py-3 font-medium">涨跌幅</th>
-                                    <th class="text-right px-5 py-3 font-medium hidden md:table-cell">成交量</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-yellow-500">Au(T+D)</span>
-                                            <span class="font-medium">黄金T+D</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">542.35</td>
-                                    <td class="text-right px-5 py-3 price-down font-medium">-0.15%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">68,420</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-gray-400">Ag(T+D)</span>
-                                            <span class="font-medium">白银T+D</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">6,852</td>
-                                    <td class="text-right px-5 py-3 price-down font-medium">-0.08%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">52,180</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-red-400">Crude</span>
-                                            <span class="font-medium">WTI原油</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">78.92</td>
-                                    <td class="text-right px-5 py-3 price-down font-medium">-0.32%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">245,680</td>
-                                </tr>
-                                <tr class="table-row border-b border-slate-700/30">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-blue-400">NG</span>
-                                            <span class="font-medium">天然气</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">2.15</td>
-                                    <td class="text-right px-5 py-3 price-down font-medium">-1.85%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">125,420</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td class="px-5 py-3">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-purple-400">Rh</span>
-                                            <span class="font-medium">铑金</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-right px-5 py-3 font-mono">4,685.00</td>
-                                    <td class="text-right px-5 py-3 price-down font-medium">-0.42%</td>
-                                    <td class="text-right px-5 py-3 text-slate-400 hidden md:table-cell">3,250</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Smart Analysis -->
+                <!-- Time Performance -->
                 <div class="glass rounded-xl p-5">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-lg">🤖</span>
-                        <h3 class="font-semibold text-slate-200">AI 智能分析</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="glass-light rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-slate-400">趋势判断</span>
-                                <span class="text-xs px-2 py-1 rounded bg-green-500/20 text-green-400">看涨</span>
-                            </div>
-                            <p class="text-xs text-slate-500">黄金价格突破关键阻力位，短期趋势偏多</p>
+                    <h3 class="font-semibold text-slate-200 mb-4">周期表现</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">1天</div>
+                            <div class="text-sm font-mono price-down">-0.04%</div>
                         </div>
-                        <div class="glass-light rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-slate-400">支撑位</span>
-                                <span class="text-sm font-mono text-slate-200">2,305.00</span>
-                            </div>
-                            <p class="text-xs text-slate-500">强支撑区域，可关注回调买入机会</p>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">5天</div>
+                            <div class="text-sm font-mono price-down">-0.39%</div>
                         </div>
-                        <div class="glass-light rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-slate-400">阻力位</span>
-                                <span class="text-sm font-mono text-slate-200">2,340.00</span>
-                            </div>
-                            <p class="text-xs text-slate-500">前期高点区域，关注突破情况</p>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">1个月</div>
+                            <div class="text-sm font-mono price-up">+7.27%</div>
                         </div>
-                        <div class="glass-light rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-slate-400">RSI指标</span>
-                                <span class="text-sm font-mono text-yellow-400">62.5</span>
-                            </div>
-                            <p class="text-xs text-slate-500">处于中性偏强区域，未超买</p>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">6个月</div>
+                            <div class="text-sm font-mono price-up">+19.00%</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">年初至今</div>
+                            <div class="text-sm font-mono price-up">+8.81%</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">1年</div>
+                            <div class="text-sm font-mono price-up">+40.57%</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">5年</div>
+                            <div class="text-sm font-mono price-up">+164.28%</div>
+                        </div>
+                        <div class="glass-light rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-400">10年</div>
+                            <div class="text-sm font-mono price-up">+271.68%</div>
                         </div>
                     </div>
                 </div>
@@ -484,79 +312,77 @@
 
             <!-- Sidebar -->
             <div class="space-y-6">
-                <!-- Trading Signals -->
-                <div class="glass rounded-xl p-5">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-lg">📊</span>
-                        <h3 class="font-semibold text-slate-200">交易信号</h3>
+                <!-- TradingView Timeline Widget - News -->
+                <div id="news" class="glass rounded-xl p-5">
+                    <h3 class="font-semibold text-slate-200 mb-4">市场资讯</h3>
+                    <!-- TradingView Timeline Widget -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                        {
+                            "feedMode": "symbol",
+                            "symbol": "OANDA:XAUUSD",
+                            "isTransparent": true,
+                            "height": "600",
+                            "width": "100%",
+                            "colorTheme": "dark",
+                            "locale": "zh_CN"
+                        }
+                        </script>
                     </div>
+                </div>
+
+                <!-- Market Sentiment -->
+                <div class="glass rounded-xl p-5">
+                    <h3 class="font-semibold text-slate-200 mb-4">市场情绪</h3>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg">
                             <div>
-                                <div class="text-sm font-medium">XAU/USD</div>
-                                <div class="text-xs text-slate-500">做多信号</div>
+                                <div class="text-sm font-medium">短期趋势</div>
+                                <div class="text-xs text-slate-500">1小时级别</div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs price-up font-medium">买入 2,320</div>
-                                <div class="text-xs text-slate-500">止损 2,305</div>
-                            </div>
+                            <span class="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">震荡</span>
                         </div>
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg">
                             <div>
-                                <div class="text-sm font-medium">XAG/USD</div>
-                                <div class="text-xs text-slate-500">观望</div>
+                                <div class="text-sm font-medium">中期趋势</div>
+                                <div class="text-xs text-slate-500">日线级别</div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs text-yellow-400 font-medium">等待信号</div>
-                                <div class="text-xs text-slate-500">关注 28.50</div>
-                            </div>
+                            <span class="text-xs px-2 py-1 rounded bg-green-500/20 text-green-400">偏多</span>
                         </div>
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg">
                             <div>
-                                <div class="text-sm font-medium">USD/JPY</div>
-                                <div class="text-xs text-slate-500">做空信号</div>
+                                <div class="text-sm font-medium">长期趋势</div>
+                                <div class="text-xs text-slate-500">周线级别</div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs price-down font-medium">卖出 158.00</div>
-                                <div class="text-xs text-slate-500">止损 158.50</div>
-                            </div>
+                            <span class="text-xs px-2 py-1 rounded bg-green-500/20 text-green-400">看涨</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Portfolio -->
+                <!-- Key Levels -->
                 <div class="glass rounded-xl p-5">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-lg">💼</span>
-                        <h3 class="font-semibold text-slate-200">我的持仓</h3>
-                    </div>
-                    <div class="text-center py-8 text-slate-500">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-                        </svg>
-                        <p class="text-sm">暂无持仓</p>
-                        <p class="text-xs mt-1">前往交易信号开始模拟交易</p>
-                    </div>
-                </div>
-
-                <!-- Market News -->
-                <div class="glass rounded-xl p-5">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-lg">📰</span>
-                        <h3 class="font-semibold text-slate-200">市场资讯</h3>
-                    </div>
+                    <h3 class="font-semibold text-slate-200 mb-4">关键价位</h3>
                     <div class="space-y-3">
-                        <div class="p-3 glass-light rounded-lg">
-                            <div class="text-xs text-yellow-400 mb-1">刚刚</div>
-                            <p class="text-xs text-slate-300">美联储官员暗示可能降息，黄金价格应声上涨</p>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg">
+                            <span class="text-sm text-slate-400">强阻力</span>
+                            <span class="text-sm font-mono text-red-400">4,833</span>
                         </div>
-                        <div class="p-3 glass-light rounded-lg">
-                            <div class="text-xs text-slate-500 mb-1">30分钟前</div>
-                            <p class="text-xs text-slate-300">地缘政治风险升温，避险情绪推动金价走高</p>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg">
+                            <span class="text-sm text-slate-400">阻力位</span>
+                            <span class="text-sm font-mono text-slate-200">4,793</span>
                         </div>
-                        <div class="p-3 glass-light rounded-lg">
-                            <div class="text-xs text-slate-500 mb-1">1小时前</div>
-                            <p class="text-xs text-slate-300">全球央行继续增持黄金储备，需求强劲</p>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg">
+                            <span class="text-sm text-slate-400">现价</span>
+                            <span class="text-sm font-mono gold-text">4,707.82</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg">
+                            <span class="text-sm text-slate-400">支撑位</span>
+                            <span class="text-sm font-mono text-slate-200">4,657</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg">
+                            <span class="text-sm text-slate-400">强支撑</span>
+                            <span class="text-sm font-mono text-green-400">4,600</span>
                         </div>
                     </div>
                 </div>
@@ -567,34 +393,31 @@
     <!-- Footer -->
     <footer class="mt-12 py-6 border-t border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
-            <p>模拟数据，仅供演示参考 | 投资有风险，入市需谨慎</p>
-            <p class="mt-1">黄金交易大师 © 2024</p>
+            <p>数据来源于 <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-yellow-500 hover:underline">TradingView</a> | 投资有风险，入市需谨慎</p>
+            <p class="mt-1">黄金交易大师 © 2026</p>
         </div>
     </footer>
 
     <script>
-        // Simulated real-time price updates
-        function updatePrices() {
-            const elements = document.querySelectorAll('.price-up, .price-down');
-            elements.forEach(el => {
-                if (Math.random() > 0.7) {
-                    el.style.opacity = '0.5';
-                    setTimeout(() => {
-                        el.style.opacity = '1';
-                    }, 300);
-                }
-            });
-        }
-
-        setInterval(updatePrices, 5000);
-
-        // Time update
+        // Update time display
         function updateTime() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
-            // This is a placeholder - in a real app, you'd fetch actual market times
+            const timeStr = now.toLocaleString('zh-CN', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false 
+            });
+            const el = document.getElementById('updateTime');
+            if (el) {
+                el.textContent = '更新时间: ' + timeStr;
+            }
         }
-
+        
+        updateTime();
         setInterval(updateTime, 1000);
     </script>
 </body>
