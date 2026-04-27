@@ -256,32 +256,80 @@
             </div>
         </div>
 
-        <!-- Main Chart -->
-        <div id="chart" class="mb-6">
+        <!-- US Stock Market Overview -->
+        <div class="mb-6">
             <div class="glass rounded-xl p-5">
-                <h3 class="font-semibold text-slate-200 mb-4">实时图表</h3>
-                <!-- TradingView Advanced Chart Widget -->
-                <div class="tradingview-widget-container" style="height: 500px;">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                    {
-                        "autosize": true,
-                        "symbol": "OANDA:XAUUSD",
-                        "interval": "60",
-                        "timezone": "Asia/Shanghai",
-                        "theme": "dark",
-                        "style": "1",
-                        "locale": "zh_CN",
-                        "backgroundColor": "rgba(30, 41, 59, 0.7)",
-                        "gridColor": "rgba(148, 163, 184, 0.1)",
-                        "hide_top_toolbar": false,
-                        "hide_legend": false,
-                        "save_image": false,
-                        "allow_symbol_change": true,
-                        "calendar": false,
-                        "support_host": "https://www.tradingview.com"
-                    }
-                    </script>
+                <h3 class="font-semibold text-slate-200 mb-4">美股市场</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- S&P 500 -->
+                    <div class="glass-light rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-400">标普500</span>
+                            <span class="text-xs text-slate-500">SPX</span>
+                        </div>
+                        <div class="tradingview-widget-container" style="height: 120px;">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                            {
+                                "symbol": "OANDA:SPX500USD",
+                                "width": "100%",
+                                "height": "100%",
+                                "locale": "zh_CN",
+                                "dateRange": "1D",
+                                "colorTheme": "dark",
+                                "isTransparent": true,
+                                "autosize": true,
+                                "largeChartUrl": "https://cn.tradingview.com/symbols/SPX/"
+                            }
+                            </script>
+                        </div>
+                    </div>
+                    <!-- Nasdaq -->
+                    <div class="glass-light rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-400">纳斯达克</span>
+                            <span class="text-xs text-slate-500">IXIC</span>
+                        </div>
+                        <div class="tradingview-widget-container" style="height: 120px;">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                            {
+                                "symbol": "OANDA:NAS100USD",
+                                "width": "100%",
+                                "height": "100%",
+                                "locale": "zh_CN",
+                                "dateRange": "1D",
+                                "colorTheme": "dark",
+                                "isTransparent": true,
+                                "autosize": true,
+                                "largeChartUrl": "https://cn.tradingview.com/symbols/NASDAQ/"
+                            }
+                            </script>
+                        </div>
+                    </div>
+                    <!-- Dow Jones -->
+                    <div class="glass-light rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-400">道琼斯</span>
+                            <span class="text-xs text-slate-500">DJI</span>
+                        </div>
+                        <div class="tradingview-widget-container" style="height: 120px;">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                            {
+                                "symbol": "OANDA:US30USD",
+                                "width": "100%",
+                                "height": "100%",
+                                "locale": "zh_CN",
+                                "dateRange": "1D",
+                                "colorTheme": "dark",
+                                "isTransparent": true,
+                                "autosize": true,
+                                "largeChartUrl": "https://cn.tradingview.com/symbols/DOW/"
+                            }
+                            </script>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
