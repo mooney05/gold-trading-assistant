@@ -39,7 +39,6 @@
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        .tradingview-widget-container { border-radius: 12px; overflow: hidden; }
         .price-up { color: #ef4444; }
         .price-down { color: #22c55e; }
     </style>
@@ -80,10 +79,33 @@
                     </div>
                     <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-xs text-slate-500 hover:text-yellow-400 transition-colors">查看完整图表 →</a>
                 </div>
-                <div id="tv-gold-mini" class="tradingview-widget-container" style="height: 200px;"></div>
+                <div class="flex items-end justify-between mb-3">
+                    <div>
+                        <div class="text-3xl font-bold font-mono gold-text" id="xauPrice">--</div>
+                        <div class="text-xs text-slate-500 mt-1">美元/盎司</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-mono" id="xauChange">--</div>
+                        <div class="text-xs text-slate-500" id="xauPercent">--</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">今开</div>
+                        <div class="font-mono text-slate-200" id="xauOpen">--</div>
+                    </div>
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">最高</div>
+                        <div class="font-mono text-slate-200" id="xauHigh">--</div>
+                    </div>
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">最低</div>
+                        <div class="font-mono text-slate-200" id="xauLow">--</div>
+                    </div>
+                </div>
                 <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
-                    <span>数据来源: TradingView</span>
-                    <span>美元/盎司</span>
+                    <span>数据来源: 新浪财经</span>
+                    <span id="xauUpdateTime">更新时间: --</span>
                 </div>
             </div>
 
@@ -129,22 +151,22 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="glass-light rounded-xl p-4">
                 <div class="text-xs text-slate-400 mb-1">成交量</div>
-                <div class="text-lg font-bold font-mono">312.27K</div>
-                <div class="text-xs text-slate-500">ticks</div>
+                <div class="text-lg font-bold font-mono" id="xauVol">--</div>
+                <div class="text-xs text-slate-500">手</div>
             </div>
             <div class="glass-light rounded-xl p-4">
                 <div class="text-xs text-slate-400 mb-1">前收盘</div>
-                <div class="text-lg font-bold font-mono">4,709.75</div>
+                <div class="text-lg font-bold font-mono" id="xauPrev">--</div>
                 <div class="text-xs text-slate-500">USD</div>
             </div>
             <div class="glass-light rounded-xl p-4">
-                <div class="text-xs text-slate-400 mb-1">开盘价</div>
-                <div class="text-lg font-bold font-mono">4,696.88</div>
+                <div class="text-xs text-slate-400 mb-1">买价</div>
+                <div class="text-lg font-bold font-mono" id="xauBid">--</div>
                 <div class="text-xs text-slate-500">USD</div>
             </div>
             <div class="glass-light rounded-xl p-4">
-                <div class="text-xs text-slate-400 mb-1">当日范围</div>
-                <div class="text-sm font-bold font-mono">4,672.41 - 4,729.97</div>
+                <div class="text-xs text-slate-400 mb-1">卖价</div>
+                <div class="text-lg font-bold font-mono" id="xauAsk">--</div>
                 <div class="text-xs text-slate-500">USD</div>
             </div>
         </div>
@@ -167,11 +189,6 @@
             </div>
 
             <div class="space-y-6">
-                <div id="news" class="glass rounded-xl p-5">
-                    <h3 class="font-semibold text-slate-200 mb-4">市场资讯</h3>
-                    <div id="tv-gold-timeline" class="tradingview-widget-container"></div>
-                </div>
-
                 <div class="glass rounded-xl p-5">
                     <h3 class="font-semibold text-slate-200 mb-4">市场情绪</h3>
                     <div class="space-y-3">
@@ -195,7 +212,7 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">强阻力</span><span class="text-sm font-mono text-red-400">4,833</span></div>
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">阻力位</span><span class="text-sm font-mono text-slate-200">4,793</span></div>
-                        <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">现价</span><span class="text-sm font-mono gold-text">4,707.82</span></div>
+                        <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">现价</span><span class="text-sm font-mono gold-text" id="keyPrice">--</span></div>
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">支撑位</span><span class="text-sm font-mono text-slate-200">4,657</span></div>
                         <div class="flex items-center justify-between p-3 glass-light rounded-lg"><span class="text-sm text-slate-400">强支撑</span><span class="text-sm font-mono text-green-400">4,600</span></div>
                     </div>
@@ -210,19 +227,75 @@
             <div class="glass rounded-xl p-5">
                 <h3 class="font-semibold text-slate-200 mb-4">美股市场</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="glass-light rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm text-slate-400">标普500</span>
-                            <span class="text-xs text-slate-500">SPX</span>
+                    <div class="glass-light rounded-lg p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-sm text-slate-400">标普500</span>
+                                <span class="ml-2 text-xs text-slate-500">SPX</span>
+                            </div>
                         </div>
-                        <div id="tv-us-spx" class="tradingview-widget-container" style="height: 120px;"></div>
+                        <div class="flex items-end justify-between mb-3">
+                            <div>
+                                <div class="text-3xl font-bold font-mono text-slate-200" id="spxPrice">--</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-mono" id="spxChange">--</div>
+                                <div class="text-xs text-slate-500" id="spxPercent">--</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">今开</div>
+                                <div class="font-mono text-slate-200" id="spxOpen">--</div>
+                            </div>
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">最高</div>
+                                <div class="font-mono text-slate-200" id="spxHigh">--</div>
+                            </div>
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">最低</div>
+                                <div class="font-mono text-slate-200" id="spxLow">--</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2 text-xs text-slate-500">
+                            <span>数据来源: 新浪财经</span>
+                            <span id="spxTime">--</span>
+                        </div>
                     </div>
-                    <div class="glass-light rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm text-slate-400">纳斯达克</span>
-                            <span class="text-xs text-slate-500">IXIC</span>
+                    <div class="glass-light rounded-lg p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-sm text-slate-400">纳斯达克</span>
+                                <span class="ml-2 text-xs text-slate-500">IXIC</span>
+                            </div>
                         </div>
-                        <div id="tv-us-nasdaq" class="tradingview-widget-container" style="height: 120px;"></div>
+                        <div class="flex items-end justify-between mb-3">
+                            <div>
+                                <div class="text-3xl font-bold font-mono text-slate-200" id="ixicPrice">--</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-mono" id="ixicChange">--</div>
+                                <div class="text-xs text-slate-500" id="ixicPercent">--</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">今开</div>
+                                <div class="font-mono text-slate-200" id="ixicOpen">--</div>
+                            </div>
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">最高</div>
+                                <div class="font-mono text-slate-200" id="ixicHigh">--</div>
+                            </div>
+                            <div class="glass rounded p-2 text-center">
+                                <div class="text-slate-500">最低</div>
+                                <div class="font-mono text-slate-200" id="ixicLow">--</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2 text-xs text-slate-500">
+                            <span>数据来源: 新浪财经</span>
+                            <span id="ixicTime">--</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -371,7 +444,7 @@
                     <span class="text-xs text-slate-500 ml-2">建议买入/加仓</span>
                 </div>
                 <div id="lsBullList" class="space-y-3">
-                    <div class="text-center py-4 text-slate-500 text-xs">点击刷新加载推荐</div>
+                    <div class="text-center py-4 text-slate-500 text-xs">加载中...</div>
                 </div>
             </div>
 
@@ -382,7 +455,7 @@
                     <span class="text-xs text-slate-500 ml-2">建议减仓/观望</span>
                 </div>
                 <div id="lsBearList" class="space-y-3">
-                    <div class="text-center py-4 text-slate-500 text-xs">点击刷新加载推荐</div>
+                    <div class="text-center py-4 text-slate-500 text-xs">加载中...</div>
                 </div>
             </div>
         </div>
@@ -390,49 +463,12 @@
 
     <footer class="mt-12 py-6 border-t border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
-            <p>数据来源于 <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-yellow-500 hover:underline">TradingView</a> | 投资有风险，入市需谨慎</p>
+            <p>数据来源于 <span class="text-yellow-500">新浪财经</span> / <span class="text-yellow-500">东方财富</span> / <span class="text-yellow-500">天天基金</span> | 投资有风险，入市需谨慎</p>
             <p class="mt-1">黄金交易大师 © 2026</p>
         </div>
     </footer>
 
     <script>
-        // TradingView widget configs
-        const tvConfigs = {
-            'tv-gold-mini': {
-                src: 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js',
-                cfg: { symbol: 'OANDA:XAUUSD', width: '100%', height: '100%', locale: 'zh_CN', dateRange: '1D', colorTheme: 'dark', isTransparent: true, autosize: true, largeChartUrl: 'https://cn.tradingview.com/symbols/XAUUSD/' }
-            },
-            'tv-gold-timeline': {
-                src: 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js',
-                cfg: { feedMode: 'symbol', symbol: 'OANDA:XAUUSD', isTransparent: true, height: '600', width: '100%', colorTheme: 'dark', locale: 'zh_CN' }
-            },
-            'tv-us-spx': {
-                src: 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js',
-                cfg: { symbol: 'OANDA:SPX500USD', width: '100%', height: '100%', locale: 'zh_CN', dateRange: '1D', colorTheme: 'dark', isTransparent: true, autosize: true, largeChartUrl: 'https://cn.tradingview.com/symbols/SPX/' }
-            },
-            'tv-us-nasdaq': {
-                src: 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js',
-                cfg: { symbol: 'OANDA:NAS100USD', width: '100%', height: '100%', locale: 'zh_CN', dateRange: '1D', colorTheme: 'dark', isTransparent: true, autosize: true, largeChartUrl: 'https://cn.tradingview.com/symbols/NASDAQ/' }
-            }
-        };
-        const injectedTV = new Set();
-
-        function injectTV(id) {
-            if (injectedTV.has(id)) return;
-            const config = tvConfigs[id];
-            if (!config) return;
-            injectedTV.add(id);
-            const container = document.getElementById(id);
-            if (!container) return;
-            container.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = config.src;
-            script.async = true;
-            script.textContent = JSON.stringify(config.cfg, null, 4);
-            container.appendChild(script);
-        }
-
         // Page switching
         function switchPage(page) {
             const pages = ['gold', 'us', 'fund', 'sim', 'longshort'];
@@ -447,32 +483,13 @@
                 if (nav) nav.className = p === page ? activeClass : inactiveClass;
             }
 
-            if (page === 'gold') {
-                injectTV('tv-gold-mini');
-            } else if (page === 'us') {
-                injectTV('tv-us-spx');
-                injectTV('tv-us-nasdaq');
-            } else if (page === 'fund') {
+            if (page === 'fund') {
                 setTimeout(loadFunds, 300);
             } else if (page === 'sim') {
                 setTimeout(analyzePortfolio, 300);
+            } else if (page === 'longshort') {
+                setTimeout(refreshLongShort, 300);
             }
-        }
-
-        // Lazy load timeline when scrolled into view
-        let timelineObserver;
-        function setupTimelineObserver() {
-            const el = document.getElementById('news');
-            if (!el || timelineObserver) return;
-            timelineObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        injectTV('tv-gold-timeline');
-                        timelineObserver.unobserve(entry.target);
-                    }
-                });
-            }, { rootMargin: '100px' });
-            timelineObserver.observe(el);
         }
 
         // Update time
@@ -484,6 +501,110 @@
         }
         updateTime();
         setInterval(updateTime, 1000);
+
+        // Sina Finance API (for gold and US indices)
+        function fetchSinaQuotes(codes, callback) {
+            const script = document.createElement('script');
+            script.src = 'https://hq.sinajs.cn/list=' + codes.join(',');
+            script.onload = function() {
+                const result = {};
+                for (const code of codes) {
+                    const varName = code.startsWith('hf_') ? 'hq_str_hf_' + code.slice(3) : 'hq_str_' + code;
+                    const data = window[varName];
+                    if (data && data.length > 0) {
+                        result[code] = data.split(',');
+                    }
+                }
+                callback(result);
+            };
+            script.onerror = function() { callback({}); };
+            document.head.appendChild(script);
+        }
+
+        function refreshXAU() {
+            fetchSinaQuotes(['hf_XAU'], function(data) {
+                const d = data['hf_XAU'];
+                if (!d || d.length < 14) return;
+                const price = parseFloat(d[0]).toFixed(2);
+                const bid = parseFloat(d[1]).toFixed(2);
+                const ask = parseFloat(d[2]).toFixed(2);
+                const open = parseFloat(d[3]).toFixed(2);
+                const high = parseFloat(d[4]).toFixed(2);
+                const low = parseFloat(d[5]).toFixed(2);
+                const timeStr = d[6];
+                const prev = parseFloat(d[7]).toFixed(2);
+                const vol = d[8];
+                const change = (price - prev).toFixed(2);
+                const changePct = prev > 0 ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+                const sign = change >= 0 ? '+' : '';
+                const colorClass = change >= 0 ? 'price-up' : 'price-down';
+
+                document.getElementById('xauPrice').textContent = price;
+                document.getElementById('xauChange').textContent = sign + change;
+                document.getElementById('xauChange').className = 'text-sm font-mono ' + colorClass;
+                document.getElementById('xauPercent').textContent = sign + changePct + '%';
+                document.getElementById('xauPercent').className = 'text-xs ' + colorClass;
+                document.getElementById('xauOpen').textContent = open;
+                document.getElementById('xauHigh').textContent = high;
+                document.getElementById('xauLow').textContent = low;
+                document.getElementById('xauVol').textContent = vol;
+                document.getElementById('xauPrev').textContent = prev;
+                document.getElementById('xauBid').textContent = bid;
+                document.getElementById('xauAsk').textContent = ask;
+                document.getElementById('xauUpdateTime').textContent = '更新时间: ' + timeStr;
+                document.getElementById('keyPrice').textContent = price;
+            });
+        }
+
+        function refreshUSIndices() {
+            fetchSinaQuotes(['gb_inx', 'gb_ixic'], function(data) {
+                const spx = data['gb_inx'];
+                if (spx && spx.length > 8) {
+                    const price = parseFloat(spx[1]).toFixed(2);
+                    const pct = parseFloat(spx[2]).toFixed(2);
+                    const change = parseFloat(spx[4]).toFixed(2);
+                    const open = parseFloat(spx[5]).toFixed(2);
+                    const high = parseFloat(spx[6]).toFixed(2);
+                    const low = parseFloat(spx[7]).toFixed(2);
+                    const timeStr = spx[3];
+                    const sign = change >= 0 ? '+' : '';
+                    const colorClass = change >= 0 ? 'price-up' : 'price-down';
+
+                    document.getElementById('spxPrice').textContent = price;
+                    document.getElementById('spxChange').textContent = sign + change;
+                    document.getElementById('spxChange').className = 'text-sm font-mono ' + colorClass;
+                    document.getElementById('spxPercent').textContent = sign + pct + '%';
+                    document.getElementById('spxPercent').className = 'text-xs ' + colorClass;
+                    document.getElementById('spxOpen').textContent = open;
+                    document.getElementById('spxHigh').textContent = high;
+                    document.getElementById('spxLow').textContent = low;
+                    document.getElementById('spxTime').textContent = timeStr;
+                }
+
+                const ixic = data['gb_ixic'];
+                if (ixic && ixic.length > 8) {
+                    const price = parseFloat(ixic[1]).toFixed(2);
+                    const pct = parseFloat(ixic[2]).toFixed(2);
+                    const change = parseFloat(ixic[4]).toFixed(2);
+                    const open = parseFloat(ixic[5]).toFixed(2);
+                    const high = parseFloat(ixic[6]).toFixed(2);
+                    const low = parseFloat(ixic[7]).toFixed(2);
+                    const timeStr = ixic[3];
+                    const sign = change >= 0 ? '+' : '';
+                    const colorClass = change >= 0 ? 'price-up' : 'price-down';
+
+                    document.getElementById('ixicPrice').textContent = price;
+                    document.getElementById('ixicChange').textContent = sign + change;
+                    document.getElementById('ixicChange').className = 'text-sm font-mono ' + colorClass;
+                    document.getElementById('ixicPercent').textContent = sign + pct + '%';
+                    document.getElementById('ixicPercent').className = 'text-xs ' + colorClass;
+                    document.getElementById('ixicOpen').textContent = open;
+                    document.getElementById('ixicHigh').textContent = high;
+                    document.getElementById('ixicLow').textContent = low;
+                    document.getElementById('ixicTime').textContent = timeStr;
+                }
+            });
+        }
 
         // AU9999 data fetch (every 5 minutes)
         async function fetchAU9999() {
@@ -510,10 +631,10 @@
                     const sign = change >= 0 ? '+' : '';
                     const colorClass = change >= 0 ? 'price-up' : 'price-down';
 
-                    changeEl.textContent = `${sign}${change}`;
-                    changeEl.className = `text-sm font-mono ${colorClass}`;
-                    percentEl.textContent = `${sign}${changePercent}%`;
-                    percentEl.className = `text-xs ${colorClass}`;
+                    changeEl.textContent = sign + change;
+                    changeEl.className = 'text-sm font-mono ' + colorClass;
+                    percentEl.textContent = sign + changePercent + '%';
+                    percentEl.className = 'text-xs ' + colorClass;
 
                     document.getElementById('au9999UpdateTime').textContent = '更新时间: ' + new Date().toLocaleTimeString('zh-CN');
                 }
@@ -521,8 +642,6 @@
                 console.error('Failed to fetch AU9999:', e);
             }
         }
-        fetchAU9999();
-        setInterval(fetchAU9999, 300000);
 
         // Fund valuation functionality
         let fundDataCache = {};
@@ -545,7 +664,7 @@
             fundRequestCallback = callback;
             for (const code of codes) {
                 const script = document.createElement('script');
-                script.src = `https://fundgz.1234567.com.cn/js/${code}.js?t=${Date.now()}`;
+                script.src = 'https://fundgz.1234567.com.cn/js/' + code + '.js?t=' + Date.now();
                 script.onerror = function() {
                     fundDataCache[code] = { error: true, fundcode: code };
                     fundRequestPending--;
@@ -603,7 +722,7 @@
                 const data = fundDataCache[fund.code];
                 const shares = fund.shares;
                 if (!data || data.error) {
-                    html += `<div class="p-3 glass-light rounded-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium">${fund.code}</span><span class="text-xs text-red-400">获取失败</span></div></div>`;
+                    html += '<div class="p-3 glass-light rounded-lg"><div class="flex items-center justify-between"><span class="text-sm font-medium">' + fund.code + '</span><span class="text-xs text-red-400">获取失败</span></div></div>';
                     continue;
                 }
                 const name = data.name || fund.code;
@@ -621,28 +740,20 @@
 
                 if (shares > 0) { totalProfit += profit; totalValue += value; validCount++; }
 
-                html += `
-                    <div class="p-3 glass-light rounded-lg">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium truncate" title="${name}">${name}</span>
-                            <span class="text-xs text-slate-500">${fund.code}</span>
-                        </div>
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">${gsz.toFixed(4)}</span></span>
-                            <span class="text-xs ${gszzlClass} font-medium">${gszzlSign}${gszzl.toFixed(2)}%</span>
-                        </div>
-                        ${shares > 0 ? `<div class="flex items-center justify-between text-xs"><span class="text-slate-500">份额: ${shares}</span><span class="${profitClass} font-mono">${profitSign}${profit.toFixed(2)}</span></div>` : ''}
-                        <div class="text-xs text-slate-600 mt-1">更新时间: ${gztime}</div>
-                    </div>
-                `;
+                html += '<div class="p-3 glass-light rounded-lg">' +
+                    '<div class="flex items-center justify-between mb-1"><span class="text-sm font-medium truncate" title="' + name + '">' + name + '</span><span class="text-xs text-slate-500">' + fund.code + '</span></div>' +
+                    '<div class="flex items-center justify-between mb-1"><span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">' + gsz.toFixed(4) + '</span></span><span class="text-xs ' + gszzlClass + ' font-medium">' + gszzlSign + gszzl.toFixed(2) + '%</span></div>' +
+                    (shares > 0 ? '<div class="flex items-center justify-between text-xs"><span class="text-slate-500">份额: ' + shares + '</span><span class="' + profitClass + ' font-mono">' + profitSign + profit.toFixed(2) + '</span></div>' : '') +
+                    '<div class="text-xs text-slate-600 mt-1">更新时间: ' + gztime + '</div>' +
+                    '</div>';
             }
             listEl.innerHTML = html;
             if (validCount > 0) {
                 const profitClass = totalProfit >= 0 ? 'price-up' : 'price-down';
                 const profitSign = totalProfit >= 0 ? '+' : '';
-                document.getElementById('totalProfit').className = `text-lg font-bold font-mono ${profitClass}`;
-                document.getElementById('totalProfit').textContent = `${profitSign}${totalProfit.toFixed(2)}`;
-                document.getElementById('totalValue').textContent = `${totalValue.toFixed(2)}`;
+                document.getElementById('totalProfit').className = 'text-lg font-bold font-mono ' + profitClass;
+                document.getElementById('totalProfit').textContent = profitSign + totalProfit.toFixed(2);
+                document.getElementById('totalValue').textContent = totalValue.toFixed(2);
                 document.getElementById('fundSummary').classList.remove('hidden');
             }
         }
@@ -668,7 +779,7 @@
             for (const fund of simConfig.funds) {
                 const typeLabel = fund.type === 'us' ? '美股' : '黄金';
                 const typeColor = fund.type === 'us' ? 'text-blue-400' : 'text-yellow-400';
-                html += `<div class="flex items-center justify-between p-2 glass-light rounded-lg"><div class="flex items-center space-x-3"><span class="text-sm font-mono text-slate-300">${fund.code}</span><span class="text-xs ${typeColor}">${typeLabel}</span><span class="text-xs text-slate-400">${fund.amount.toLocaleString()}元</span></div><button onclick="removeSimFund('${fund.code}')" class="text-xs text-red-400 hover:text-red-300">删除</button></div>`;
+                html += '<div class="flex items-center justify-between p-2 glass-light rounded-lg"><div class="flex items-center space-x-3"><span class="text-sm font-mono text-slate-300">' + fund.code + '</span><span class="text-xs ' + typeColor + '">' + typeLabel + '</span><span class="text-xs text-slate-400">' + fund.amount.toLocaleString() + '元</span></div><button onclick="removeSimFund(\'' + fund.code + '\')" class="text-xs text-red-400 hover:text-red-300">删除</button></div>';
             }
             listEl.innerHTML = html;
         }
@@ -709,7 +820,7 @@
             for (const fund of simConfig.funds) {
                 const data = fundDataCache[fund.code];
                 if (!data || data.error) {
-                    html += `<div class="p-3 glass-light rounded-lg"><span class="text-sm text-red-400">${fund.code} 获取失败</span></div>`;
+                    html += '<div class="p-3 glass-light rounded-lg"><span class="text-sm text-red-400">' + fund.code + ' 获取失败</span></div>';
                     continue;
                 }
                 const name = data.name || fund.code;
@@ -733,23 +844,15 @@
                 const typeLabel = fund.type === 'us' ? '美股' : '黄金';
                 const typeBadge = fund.type === 'us' ? 'bg-blue-500/20 text-blue-400' : 'bg-yellow-500/20 text-yellow-400';
 
-                html += `
-                    <div class="p-3 glass-light rounded-lg">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center space-x-2"><span class="text-sm font-medium">${name}</span><span class="text-xs px-2 py-0.5 rounded ${typeBadge}">${typeLabel}</span></div>
-                            <span class="text-xs text-slate-500">${fund.code}</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 text-xs">
-                            <div><div class="text-slate-500">成本</div><div class="font-mono text-slate-300">${cost.toFixed(2)}</div></div>
-                            <div><div class="text-slate-500">现值</div><div class="font-mono text-slate-200">${value.toFixed(2)}</div></div>
-                            <div><div class="text-slate-500">盈亏</div><div class="font-mono ${profitClass}">${profitSign}${profit.toFixed(2)} (${profitSign}${profitPct.toFixed(2)}%)</div></div>
-                        </div>
-                        <div class="mt-2 text-xs">
-                            <span class="text-slate-500">今日估算: </span><span class="font-mono ${gszzlClass}">${gszzlSign}${gszzl.toFixed(2)}%</span>
-                            <span class="text-slate-500 ml-2">估值: </span><span class="font-mono text-slate-300">${gsz.toFixed(4)}</span>
-                        </div>
-                    </div>
-                `;
+                html += '<div class="p-3 glass-light rounded-lg">' +
+                    '<div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><span class="text-sm font-medium">' + name + '</span><span class="text-xs px-2 py-0.5 rounded ' + typeBadge + '">' + typeLabel + '</span></div><span class="text-xs text-slate-500">' + fund.code + '</span></div>' +
+                    '<div class="grid grid-cols-3 gap-2 text-xs">' +
+                    '<div><div class="text-slate-500">成本</div><div class="font-mono text-slate-300">' + cost.toFixed(2) + '</div></div>' +
+                    '<div><div class="text-slate-500">现值</div><div class="font-mono text-slate-200">' + value.toFixed(2) + '</div></div>' +
+                    '<div><div class="text-slate-500">盈亏</div><div class="font-mono ' + profitClass + '">' + profitSign + profit.toFixed(2) + ' (' + profitSign + profitPct.toFixed(2) + '%)</div></div>' +
+                    '</div>' +
+                    '<div class="mt-2 text-xs"><span class="text-slate-500">今日估算: </span><span class="font-mono ' + gszzlClass + '">' + gszzlSign + gszzl.toFixed(2) + '%</span><span class="text-slate-500 ml-2">估值: </span><span class="font-mono text-slate-300">' + gsz.toFixed(4) + '</span></div>' +
+                    '</div>';
             }
             listEl.innerHTML = html;
 
@@ -759,9 +862,9 @@
             const profitSign = totalProfit >= 0 ? '+' : '';
 
             document.getElementById('simTotalValue').textContent = totalValue.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('simTotalValue').className = `text-lg font-bold font-mono ${profitClass}`;
-            document.getElementById('simTotalProfit').textContent = `${profitSign}${totalProfit.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${profitSign}${totalProfitPct.toFixed(2)}%)`;
-            document.getElementById('simTotalProfit').className = `text-lg font-bold font-mono ${profitClass}`;
+            document.getElementById('simTotalValue').className = 'text-lg font-bold font-mono ' + profitClass;
+            document.getElementById('simTotalProfit').textContent = profitSign + totalProfit.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' (' + profitSign + totalProfitPct.toFixed(2) + '%)';
+            document.getElementById('simTotalProfit').className = 'text-lg font-bold font-mono ' + profitClass;
 
             const cash = simConfig.capital - totalCost;
             document.getElementById('simCash').textContent = cash.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -785,18 +888,18 @@
             const threshold = 0.5;
 
             if (diff > threshold) {
-                detailText += `美股基金平均估算涨幅 <span class="text-blue-400 font-mono">+${usAvgGszzl.toFixed(2)}%</span>，跑赢黄金基金 <span class="text-yellow-400 font-mono">${goldAvgGszzl.toFixed(2)}%</span>。`;
+                detailText += '美股基金平均估算涨幅 <span class="text-blue-400 font-mono">+' + usAvgGszzl.toFixed(2) + '%</span>，跑赢黄金基金 <span class="text-yellow-400 font-mono">' + goldAvgGszzl.toFixed(2) + '%</span>。';
             } else if (diff < -threshold) {
-                detailText += `黄金基金平均估算涨幅 <span class="text-yellow-400 font-mono">+${goldAvgGszzl.toFixed(2)}%</span>，跑赢美股基金 <span class="text-blue-400 font-mono">${usAvgGszzl.toFixed(2)}%</span>。`;
+                detailText += '黄金基金平均估算涨幅 <span class="text-yellow-400 font-mono">+' + goldAvgGszzl.toFixed(2) + '%</span>，跑赢美股基金 <span class="text-blue-400 font-mono">' + usAvgGszzl.toFixed(2) + '%</span>。';
             } else {
-                detailText += `美股基金平均估算涨幅 <span class="text-blue-400 font-mono">${usAvgGszzl.toFixed(2)}%</span>，黄金基金 <span class="text-yellow-400 font-mono">${goldAvgGszzl.toFixed(2)}%</span>，差异不大。`;
+                detailText += '美股基金平均估算涨幅 <span class="text-blue-400 font-mono">' + usAvgGszzl.toFixed(2) + '%</span>，黄金基金 <span class="text-yellow-400 font-mono">' + goldAvgGszzl.toFixed(2) + '%</span>，差异不大。';
             }
 
             const targetUs = 50;
             const deviationUs = usRatio - targetUs;
             let rebalanceSignal = '仓位分配较为均衡';
             if (Math.abs(deviationUs) > 10) {
-                rebalanceSignal = deviationUs > 0 ? `美股仓位偏高 (${usRatio.toFixed(1)}%)，建议向黄金再平衡` : `黄金仓位偏高 (${goldRatio.toFixed(1)}%)，建议向美股再平衡`;
+                rebalanceSignal = deviationUs > 0 ? '美股仓位偏高 (' + usRatio.toFixed(1) + '%)，建议向黄金再平衡' : '黄金仓位偏高 (' + goldRatio.toFixed(1) + '%)，建议向美股再平衡';
             }
 
             let actionSignal = '建议：继续持有观望，等待更明确信号';
@@ -810,11 +913,10 @@
             }
 
             const actionColor = actionSignal.includes('增持') ? 'text-green-400' : (actionSignal.includes('减持') ? 'text-yellow-400' : 'text-slate-300');
-            adviceEl.innerHTML = `
-                <div class="p-3 glass-light rounded-lg"><div class="text-sm font-medium mb-2">趋势判断</div><div class="text-xs text-slate-400">${detailText}</div></div>
-                <div class="p-3 glass-light rounded-lg"><div class="text-sm font-medium mb-2">仓位诊断</div><div class="text-xs text-slate-400">${rebalanceSignal}。现金余额: <span class="font-mono text-slate-200">${cash.toFixed(2)}</span> 元。</div></div>
-                <div class="p-3 glass-light rounded-lg border border-yellow-500/20"><div class="text-sm font-medium mb-2 ${actionColor}">操作建议</div><div class="text-xs ${actionColor} font-medium">${actionSignal}</div><div class="text-xs text-slate-500 mt-1">提示：以上为基于当日估算数据的模拟建议，不构成真实投资建议。</div></div>
-            `;
+            adviceEl.innerHTML =
+                '<div class="p-3 glass-light rounded-lg"><div class="text-sm font-medium mb-2">趋势判断</div><div class="text-xs text-slate-400">' + detailText + '</div></div>' +
+                '<div class="p-3 glass-light rounded-lg"><div class="text-sm font-medium mb-2">仓位诊断</div><div class="text-xs text-slate-400">' + rebalanceSignal + '。现金余额: <span class="font-mono text-slate-200">' + cash.toFixed(2) + '</span> 元。</div></div>' +
+                '<div class="p-3 glass-light rounded-lg border border-yellow-500/20"><div class="text-sm font-medium mb-2 ' + actionColor + '">操作建议</div><div class="text-xs ' + actionColor + ' font-medium">' + actionSignal + '</div><div class="text-xs text-slate-500 mt-1">提示：以上为基于当日估算数据的模拟建议，不构成真实投资建议。</div></div>';
         }
 
         // Long/Short Recommendation functionality
@@ -882,34 +984,20 @@
                 bullEl.innerHTML = bullItems.map((item, i) => {
                     const score = Math.min(100, Math.max(60, 70 + item.gszzl * 5));
                     const reasons = [
-                        `金价突破近期新高，${item.type}资金持续流入，短线动量强劲，适合追涨加仓。`,
-                        `黄金板块相对估值修复空间大，${item.name}折价明显，机构增配意愿强。`,
-                        `人民币金价高位震荡，${item.type}定投可摊薄成本，长期配置价值凸显。`,
-                        `场外配置黄金最便捷通道，定投纪律性强，适合工薪族长期积累筹码。`,
-                        `美元金价强势，${item.type}提供汇率+金价双重收益，分散配置良选。`
+                        '金价突破近期新高，' + item.type + '资金持续流入，短线动量强劲，适合追涨加仓。',
+                        '黄金板块相对估值修复空间大，' + item.name + '折价明显，机构增配意愿强。',
+                        '人民币金价高位震荡，' + item.type + '定投可摊薄成本，长期配置价值凸显。',
+                        '场外配置黄金最便捷通道，定投纪律性强，适合工薪族长期积累筹码。',
+                        '美元金价强势，' + item.type + '提供汇率+金价双重收益，分散配置良选。'
                     ];
                     const tags = ['央行购金', '通胀升温', '美元走弱', 'ETF净流入', '避险需求'];
                     const reason = reasons[i % reasons.length] + ' <span class="text-yellow-500/80">' + tags.slice(i, i + 2).join(' · ') + '</span>';
-                    return `
-                        <div class="p-3 glass-light rounded-lg">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-mono">${item.code}</span>
-                                    <span class="text-sm font-medium">${item.name}</span>
-                                </div>
-                                <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">${item.type}</span>
-                            </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">${item.gsz.toFixed(4)}</span></span>
-                                <span class="text-xs font-medium price-up">+${item.gszzl.toFixed(2)}%</span>
-                            </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-slate-500">综合评分</span>
-                                <span class="text-sm font-bold text-red-400">${score.toFixed(0)}分</span>
-                            </div>
-                            <div class="text-xs text-slate-400 leading-relaxed">${reason}</div>
-                        </div>
-                    `;
+                    return '<div class="p-3 glass-light rounded-lg">' +
+                        '<div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><span class="text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-mono">' + item.code + '</span><span class="text-sm font-medium">' + item.name + '</span></div><span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">' + item.type + '</span></div>' +
+                        '<div class="flex items-center justify-between mb-2"><span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">' + item.gsz.toFixed(4) + '</span></span><span class="text-xs font-medium price-up">+' + item.gszzl.toFixed(2) + '%</span></div>' +
+                        '<div class="flex items-center justify-between mb-2"><span class="text-xs text-slate-500">综合评分</span><span class="text-sm font-bold text-red-400">' + score.toFixed(0) + '分</span></div>' +
+                        '<div class="text-xs text-slate-400 leading-relaxed">' + reason + '</div>' +
+                        '</div>';
                 }).join('');
             }
 
@@ -920,42 +1008,31 @@
                 bearEl.innerHTML = bearItems.map((item, i) => {
                     const score = Math.min(85, Math.max(50, 75 + item.gszzl * 4));
                     const reasons = [
-                        `短期${item.type}涨幅过大，RSI进入超买区域，注意获利回吐风险。`,
-                        `金价短线涨速过快，技术面存在回调需求，可等回调后再介入。`,
-                        `买卖点差成本偏高，短线交易不划算，更适合长期定投策略。`,
-                        `场内溢价偶现，注意跟踪误差风险，建议对比同类产品后选择。`,
-                        `申赎周期较长，流动性受限，急需用钱时不便，短期建议观望。`
+                        '短期' + item.type + '涨幅过大，RSI进入超买区域，注意获利回吐风险。',
+                        '金价短线涨速过快，技术面存在回调需求，可等回调后再介入。',
+                        '买卖点差成本偏高，短线交易不划算，更适合长期定投策略。',
+                        '场内溢价偶现，注意跟踪误差风险，建议对比同类产品后选择。',
+                        '申赎周期较长，流动性受限，急需用钱时不便，短期建议观望。'
                     ];
                     const tags = ['获利了结', '等待回调', '溢价风险', '流动性差', '跟踪误差'];
                     const reason = reasons[i % reasons.length] + ' <span class="text-slate-500">' + tags.slice(i, i + 2).join(' · ') + '</span>';
-                    return `
-                        <div class="p-3 glass-light rounded-lg">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400 font-mono">${item.code}</span>
-                                    <span class="text-sm font-medium">${item.name}</span>
-                                </div>
-                                <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">${item.type}</span>
-                            </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">${item.gsz.toFixed(4)}</span></span>
-                                <span class="text-xs font-medium price-down">${item.gszzl.toFixed(2)}%</span>
-                            </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-slate-500">综合评分</span>
-                                <span class="text-sm font-bold text-green-400">${score.toFixed(0)}分</span>
-                            </div>
-                            <div class="text-xs text-slate-400 leading-relaxed">${reason}</div>
-                        </div>
-                    `;
+                    return '<div class="p-3 glass-light rounded-lg">' +
+                        '<div class="flex items-center justify-between mb-2"><div class="flex items-center space-x-2"><span class="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400 font-mono">' + item.code + '</span><span class="text-sm font-medium">' + item.name + '</span></div><span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">' + item.type + '</span></div>' +
+                        '<div class="flex items-center justify-between mb-2"><span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">' + item.gsz.toFixed(4) + '</span></span><span class="text-xs font-medium price-down">' + item.gszzl.toFixed(2) + '%</span></div>' +
+                        '<div class="flex items-center justify-between mb-2"><span class="text-xs text-slate-500">综合评分</span><span class="text-sm font-bold text-green-400">' + score.toFixed(0) + '分</span></div>' +
+                        '<div class="text-xs text-slate-400 leading-relaxed">' + reason + '</div>' +
+                        '</div>';
                 }).join('');
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             renderSimConfig();
-            injectTV('tv-gold-mini');
-            setupTimelineObserver();
+            refreshXAU();
+            fetchAU9999();
+            setInterval(refreshXAU, 300000);
+            setInterval(fetchAU9999, 300000);
+            setInterval(refreshUSIndices, 300000);
             setTimeout(loadFunds, 1000);
         });
     </script>
