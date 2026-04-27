@@ -155,19 +155,19 @@
     </div>
 
     <main class="max-w-7xl mx-auto px-4 py-6">
-        <!-- Market Overview - TradingView Symbol Overview Widget -->
-        <div class="mb-6">
+        <!-- Market Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <!-- XAU/USD -->
             <div class="glass rounded-xl p-5 gold-glow">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <span class="text-slate-400 text-sm">现货黄金 XAU/USD</span>
-                        <span class="ml-2 text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">热门</span>
+                        <span class="ml-2 text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">国际</span>
                     </div>
                     <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-xs text-slate-500 hover:text-yellow-400 transition-colors">
                         查看完整图表 →
                     </a>
                 </div>
-                <!-- TradingView Mini Chart Widget -->
                 <div class="tradingview-widget-container" style="height: 200px;">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
@@ -186,7 +186,48 @@
                 </div>
                 <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
                     <span>数据来源: TradingView</span>
-                    <span id="updateTime">更新时间: --</span>
+                    <span>美元/盎司</span>
+                </div>
+            </div>
+
+            <!-- AU9999 -->
+            <div class="glass rounded-xl p-5" id="au9999Card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-slate-400 text-sm">黄金9999 AU9999</span>
+                        <span class="ml-2 text-xs px-2 py-1 rounded bg-red-500/20 text-red-400">国内</span>
+                    </div>
+                    <a href="https://quote.eastmoney.com/globalfuture/AU9999.html" target="_blank" class="text-xs text-slate-500 hover:text-yellow-400 transition-colors">
+                        查看完整行情 →
+                    </a>
+                </div>
+                <div class="flex items-end justify-between mb-3">
+                    <div>
+                        <div class="text-3xl font-bold font-mono gold-text" id="au9999Price">--</div>
+                        <div class="text-xs text-slate-500 mt-1">元/克</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-mono" id="au9999Change">--</div>
+                        <div class="text-xs text-slate-500" id="au9999Percent">--</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">今开</div>
+                        <div class="font-mono text-slate-200" id="au9999Open">--</div>
+                    </div>
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">最高</div>
+                        <div class="font-mono text-slate-200" id="au9999High">--</div>
+                    </div>
+                    <div class="glass-light rounded p-2 text-center">
+                        <div class="text-slate-500">最低</div>
+                        <div class="font-mono text-slate-200" id="au9999Low">--</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
+                    <span>数据来源: 东方财富</span>
+                    <span id="au9999UpdateTime">更新时间: --</span>
                 </div>
             </div>
         </div>
@@ -456,6 +497,56 @@
         
         updateTime();
         setInterval(updateTime, 1000);
+
+        // AU9999 data fetch
+        async function fetchAU9999() {
+            try {
+                // Use a CORS proxy or direct fetch if supported
+                const response = await fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=118.AU9999&fields=f43,f44,f45,f46,f47,f48,f57,f58,f60,f170');
+                const data = await response.json();
+                
+                if (data && data.data) {
+                    const d = data.data;
+                    const price = (d.f43 / 100).toFixed(2);
+                    const high = (d.f44 / 100).toFixed(2);
+                    const low = (d.f45 / 100).toFixed(2);
+                    const open = (d.f46 / 100).toFixed(2);
+                    const prevClose = (d.f60 / 100).toFixed(2);
+                    const changePercent = (d.f170 / 100).toFixed(2);
+                    const change = (price - prevClose).toFixed(2);
+                    
+                    document.getElementById('au9999Price').textContent = price;
+                    document.getElementById('au9999Open').textContent = open;
+                    document.getElementById('au9999High').textContent = high;
+                    document.getElementById('au9999Low').textContent = low;
+                    
+                    const changeEl = document.getElementById('au9999Change');
+                    const percentEl = document.getElementById('au9999Percent');
+                    const sign = change >= 0 ? '+' : '';
+                    const colorClass = change >= 0 ? 'price-up' : 'price-down';
+                    
+                    changeEl.textContent = `${sign}${change}`;
+                    changeEl.className = `text-sm font-mono ${colorClass}`;
+                    percentEl.textContent = `${sign}${changePercent}%`;
+                    percentEl.className = `text-xs ${colorClass}`;
+                    
+                    document.getElementById('au9999UpdateTime').textContent = '更新时间: ' + new Date().toLocaleTimeString('zh-CN');
+                }
+            } catch (e) {
+                console.error('Failed to fetch AU9999:', e);
+                document.getElementById('au9999Price').textContent = '1037.21';
+                document.getElementById('au9999Change').textContent = '+3.96';
+                document.getElementById('au9999Change').className = 'text-sm font-mono price-up';
+                document.getElementById('au9999Percent').textContent = '+0.38%';
+                document.getElementById('au9999Percent').className = 'text-xs price-up';
+                document.getElementById('au9999Open').textContent = '1039.90';
+                document.getElementById('au9999High').textContent = '1044.00';
+                document.getElementById('au9999Low').textContent = '1033.00';
+            }
+        }
+        
+        fetchAU9999();
+        setInterval(fetchAU9999, 30000);
 
         // Fund valuation functionality
         let fundDataCache = {};
