@@ -121,6 +121,7 @@
                 <nav class="hidden md:flex items-center space-x-2">
                     <button id="navHome" onclick="switchPage('home')" class="px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all">首页</button>
                     <button id="navFund" onclick="switchPage('fund')" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">我的基金</button>
+                    <button id="navSim" onclick="switchPage('sim')" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">模拟投资</button>
                 </nav>
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 rounded-full bg-green-500 pulse-gold"></div>
@@ -258,7 +259,7 @@
         <div class="mb-6">
             <div class="glass rounded-xl p-5">
                 <h3 class="font-semibold text-slate-200 mb-4">美股市场</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- S&P 500 -->
                     <div class="glass-light rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
@@ -301,29 +302,6 @@
                                 "isTransparent": true,
                                 "autosize": true,
                                 "largeChartUrl": "https://cn.tradingview.com/symbols/NASDAQ/"
-                            }
-                            </script>
-                        </div>
-                    </div>
-                    <!-- Dow Jones -->
-                    <div class="glass-light rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm text-slate-400">道琼斯</span>
-                            <span class="text-xs text-slate-500">DJI</span>
-                        </div>
-                        <div class="tradingview-widget-container" style="height: 120px;">
-                            <div class="tradingview-widget-container__widget"></div>
-                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                            {
-                                "symbol": "OANDA:US30USD",
-                                "width": "100%",
-                                "height": "100%",
-                                "locale": "zh_CN",
-                                "dateRange": "1D",
-                                "colorTheme": "dark",
-                                "isTransparent": true,
-                                "autosize": true,
-                                "largeChartUrl": "https://cn.tradingview.com/symbols/DOW/"
                             }
                             </script>
                         </div>
@@ -518,6 +496,94 @@
         </div>
     </main>
 
+    <!-- Simulate Page -->
+    <main id="simulatePage" class="max-w-7xl mx-auto px-4 py-6" style="display:none">
+        <div class="max-w-5xl mx-auto space-y-6">
+            <!-- Portfolio Overview -->
+            <div class="glass rounded-xl p-5">
+                <h3 class="font-semibold text-slate-200 mb-4">模拟投资组合</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div class="glass-light rounded-lg p-3 text-center">
+                        <div class="text-xs text-slate-400">总本金</div>
+                        <div class="text-lg font-bold font-mono gold-text" id="simCapital">100,000.00</div>
+                    </div>
+                    <div class="glass-light rounded-lg p-3 text-center">
+                        <div class="text-xs text-slate-400">当前市值</div>
+                        <div class="text-lg font-bold font-mono" id="simTotalValue">--</div>
+                    </div>
+                    <div class="glass-light rounded-lg p-3 text-center">
+                        <div class="text-xs text-slate-400">累计盈亏</div>
+                        <div class="text-lg font-bold font-mono" id="simTotalProfit">--</div>
+                    </div>
+                    <div class="glass-light rounded-lg p-3 text-center">
+                        <div class="text-xs text-slate-400">现金余额</div>
+                        <div class="text-lg font-bold font-mono" id="simCash">--</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass-light rounded-lg p-3">
+                        <div class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span>美股基金占比</span>
+                            <span id="simUsRatio">--</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div id="simUsBar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="glass-light rounded-lg p-3">
+                        <div class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span>黄金基金占比</span>
+                            <span id="simGoldRatio">--</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div id="simGoldBar" class="bg-yellow-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration -->
+            <div class="glass rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-slate-200">持仓配置</h3>
+                    <button onclick="saveSimConfig()" class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-xs rounded-lg transition-colors">保存并分析</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <input type="text" id="simFundCode" placeholder="基金代码" class="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-yellow-500">
+                    <input type="number" id="simFundAmount" placeholder="投资金额(元)" class="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-yellow-500">
+                    <select id="simFundType" class="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-yellow-500">
+                        <option value="us">美股场外基金</option>
+                        <option value="gold">黄金基金</option>
+                    </select>
+                </div>
+                <button onclick="addSimFund()" class="w-full md:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg transition-colors mb-4">添加基金</button>
+
+                <div id="simConfigList" class="space-y-2">
+                    <!-- Config items rendered here -->
+                </div>
+            </div>
+
+            <!-- Holdings -->
+            <div class="glass rounded-xl p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-slate-200">实时持仓</h3>
+                    <button onclick="analyzePortfolio()" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs rounded-lg transition-colors">获取最新数据</button>
+                </div>
+                <div id="simHoldingsList" class="space-y-3">
+                    <div class="text-center py-4 text-slate-500 text-xs">请先配置基金并保存</div>
+                </div>
+            </div>
+
+            <!-- AI Advice -->
+            <div class="glass rounded-xl p-5">
+                <h3 class="font-semibold text-slate-200 mb-4">AI 调仓建议</h3>
+                <div id="simAdvice" class="space-y-3">
+                    <div class="text-center py-4 text-slate-500 text-xs">点击"获取最新数据"后生成建议</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
     <!-- Footer -->
     <footer class="mt-12 py-6 border-t border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
@@ -531,20 +597,26 @@
         function switchPage(page) {
             const homePage = document.getElementById('homePage');
             const fundPage = document.getElementById('fundPage');
+            const simulatePage = document.getElementById('simulatePage');
             const navHome = document.getElementById('navHome');
             const navFund = document.getElementById('navFund');
+            const navSim = document.getElementById('navSim');
 
-            if (page === 'home') {
-                homePage.style.display = 'block';
-                fundPage.style.display = 'none';
-                navHome.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all';
-                navFund.className = 'px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all';
-            } else if (page === 'fund') {
-                homePage.style.display = 'none';
-                fundPage.style.display = 'block';
-                navHome.className = 'px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all';
-                navFund.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all';
+            const activeClass = 'px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all';
+            const inactiveClass = 'px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all';
+
+            homePage.style.display = page === 'home' ? 'block' : 'none';
+            fundPage.style.display = page === 'fund' ? 'block' : 'none';
+            simulatePage.style.display = page === 'sim' ? 'block' : 'none';
+
+            navHome.className = page === 'home' ? activeClass : inactiveClass;
+            navFund.className = page === 'fund' ? activeClass : inactiveClass;
+            navSim.className = page === 'sim' ? activeClass : inactiveClass;
+
+            if (page === 'fund') {
                 setTimeout(loadFunds, 300);
+            } else if (page === 'sim') {
+                setTimeout(analyzePortfolio, 300);
             }
         }
 
@@ -621,18 +693,49 @@
 
         // Fund valuation functionality
         let fundDataCache = {};
-        let pendingFunds = 0;
+        let fundRequestPending = 0;
+        let fundRequestCallback = null;
 
         // Global JSONP callback
         window.jsonpgz = function(data) {
             if (data && data.fundcode) {
                 fundDataCache[data.fundcode] = data;
             }
-            pendingFunds--;
-            if (pendingFunds <= 0) {
-                renderFunds();
+            fundRequestPending--;
+            if (fundRequestPending <= 0 && fundRequestCallback) {
+                const cb = fundRequestCallback;
+                fundRequestCallback = null;
+                cb();
             }
         };
+
+        function loadFundsBatch(codes, callback) {
+            fundDataCache = {};
+            fundRequestPending = codes.length;
+            fundRequestCallback = callback;
+            for (const code of codes) {
+                const script = document.createElement('script');
+                script.src = `https://fundgz.1234567.com.cn/js/${code}.js?t=${Date.now()}`;
+                script.onerror = function() {
+                    fundDataCache[code] = { error: true, fundcode: code };
+                    fundRequestPending--;
+                    if (fundRequestPending <= 0 && fundRequestCallback) {
+                        const cb = fundRequestCallback;
+                        fundRequestCallback = null;
+                        cb();
+                    }
+                };
+                document.head.appendChild(script);
+            }
+            setTimeout(() => {
+                if (fundRequestPending > 0 && fundRequestCallback) {
+                    fundRequestPending = 0;
+                    const cb = fundRequestCallback;
+                    fundRequestCallback = null;
+                    cb();
+                }
+            }, 5000);
+        }
 
         function parseFundInput(input) {
             const funds = [];
@@ -660,23 +763,8 @@
                 return;
             }
 
-            fundDataCache = {};
-            pendingFunds = funds.length;
-            
             document.getElementById('fundList').innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">加载中...</div>';
             document.getElementById('fundSummary').classList.add('hidden');
-
-            // Load each fund via JSONP
-            for (const fund of funds) {
-                const script = document.createElement('script');
-                script.src = `https://fundgz.1234567.com.cn/js/${fund.code}.js?t=${Date.now()}`;
-                script.onerror = function() {
-                    pendingFunds--;
-                    fundDataCache[fund.code] = { error: true, fundcode: fund.code };
-                    if (pendingFunds <= 0) renderFunds();
-                };
-                document.head.appendChild(script);
-            }
 
             // Store shares for rendering
             window.fundShares = {};
@@ -684,13 +772,7 @@
                 window.fundShares[fund.code] = fund.shares;
             }
 
-            // Timeout fallback
-            setTimeout(() => {
-                if (pendingFunds > 0) {
-                    pendingFunds = 0;
-                    renderFunds();
-                }
-            }, 5000);
+            loadFundsBatch(funds.map(f => f.code), renderFunds);
         }
 
         function renderFunds() {
@@ -777,8 +859,260 @@
             }
         }
 
+        // Simulation functionality
+        let simConfig = {
+            capital: 100000,
+            funds: [
+                { code: '009504', amount: 20000, type: 'us', name: '' },
+                { code: '000218', amount: 15000, type: 'us', name: '' },
+                { code: '002963', amount: 15000, type: 'us', name: '' },
+                { code: '002610', amount: 20000, type: 'gold', name: '' }
+            ]
+        };
+
+        function renderSimConfig() {
+            const listEl = document.getElementById('simConfigList');
+            if (simConfig.funds.length === 0) {
+                listEl.innerHTML = '<div class="text-xs text-slate-500">暂无配置基金</div>';
+                return;
+            }
+            let html = '';
+            for (const fund of simConfig.funds) {
+                const typeLabel = fund.type === 'us' ? '美股' : '黄金';
+                const typeColor = fund.type === 'us' ? 'text-blue-400' : 'text-yellow-400';
+                html += `
+                    <div class="flex items-center justify-between p-2 glass-light rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm font-mono text-slate-300">${fund.code}</span>
+                            <span class="text-xs ${typeColor}">${typeLabel}</span>
+                            <span class="text-xs text-slate-400">${fund.amount.toLocaleString()}元</span>
+                        </div>
+                        <button onclick="removeSimFund('${fund.code}')" class="text-xs text-red-400 hover:text-red-300">删除</button>
+                    </div>
+                `;
+            }
+            listEl.innerHTML = html;
+        }
+
+        function addSimFund() {
+            const code = document.getElementById('simFundCode').value.trim();
+            const amount = parseFloat(document.getElementById('simFundAmount').value);
+            const type = document.getElementById('simFundType').value;
+            if (!code || !amount || amount <= 0) {
+                alert('请输入有效的基金代码和金额');
+                return;
+            }
+            simConfig.funds.push({ code, amount, type, name: '' });
+            document.getElementById('simFundCode').value = '';
+            document.getElementById('simFundAmount').value = '';
+            renderSimConfig();
+        }
+
+        function removeSimFund(code) {
+            simConfig.funds = simConfig.funds.filter(f => f.code !== code);
+            renderSimConfig();
+        }
+
+        function saveSimConfig() {
+            analyzePortfolio();
+        }
+
+        function analyzePortfolio() {
+            if (simConfig.funds.length === 0) {
+                document.getElementById('simHoldingsList').innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">请先配置基金</div>';
+                return;
+            }
+
+            document.getElementById('simHoldingsList').innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">加载中...</div>';
+            loadFundsBatch(simConfig.funds.map(f => f.code), renderSimHoldings);
+        }
+
+        function renderSimHoldings() {
+            const listEl = document.getElementById('simHoldingsList');
+            let html = '';
+            let totalValue = 0;
+            let totalCost = 0;
+            let usValue = 0;
+            let goldValue = 0;
+            let usGszzlSum = 0;
+            let usCount = 0;
+            let goldGszzlSum = 0;
+            let goldCount = 0;
+
+            for (const fund of simConfig.funds) {
+                const data = fundDataCache[fund.code];
+                if (!data || data.error) {
+                    html += `<div class="p-3 glass-light rounded-lg"><span class="text-sm text-red-400">${fund.code} 获取失败</span></div>`;
+                    continue;
+                }
+
+                const name = data.name || fund.code;
+                const dwjz = parseFloat(data.dwjz) || 0;
+                const gsz = parseFloat(data.gsz) || 0;
+                const gszzl = parseFloat(data.gszzl) || 0;
+
+                const shares = fund.amount / dwjz;
+                const cost = fund.amount;
+                const value = gsz * shares;
+                const profit = value - cost;
+                const profitPct = cost > 0 ? (profit / cost * 100) : 0;
+
+                totalValue += value;
+                totalCost += cost;
+
+                if (fund.type === 'us') {
+                    usValue += value;
+                    usGszzlSum += gszzl;
+                    usCount++;
+                } else {
+                    goldValue += value;
+                    goldGszzlSum += gszzl;
+                    goldCount++;
+                }
+
+                const profitClass = profit >= 0 ? 'price-up' : 'price-down';
+                const profitSign = profit >= 0 ? '+' : '';
+                const gszzlClass = gszzl >= 0 ? 'price-up' : 'price-down';
+                const gszzlSign = gszzl >= 0 ? '+' : '';
+                const typeLabel = fund.type === 'us' ? '美股' : '黄金';
+                const typeBadge = fund.type === 'us' ? 'bg-blue-500/20 text-blue-400' : 'bg-yellow-500/20 text-yellow-400';
+
+                html += `
+                    <div class="p-3 glass-light rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium">${name}</span>
+                                <span class="text-xs px-2 py-0.5 rounded ${typeBadge}">${typeLabel}</span>
+                            </div>
+                            <span class="text-xs text-slate-500">${fund.code}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <div class="text-slate-500">成本</div>
+                                <div class="font-mono text-slate-300">${cost.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-500">现值</div>
+                                <div class="font-mono text-slate-200">${value.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-slate-500">盈亏</div>
+                                <div class="font-mono ${profitClass}">${profitSign}${profit.toFixed(2)} (${profitSign}${profitPct.toFixed(2)}%)</div>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-xs">
+                            <span class="text-slate-500">今日估算: </span>
+                            <span class="font-mono ${gszzlClass}">${gszzlSign}${gszzl.toFixed(2)}%</span>
+                            <span class="text-slate-500 ml-2">估值: </span>
+                            <span class="font-mono text-slate-300">${gsz.toFixed(4)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            listEl.innerHTML = html;
+
+            const totalProfit = totalValue - totalCost;
+            const totalProfitPct = totalCost > 0 ? (totalProfit / totalCost * 100) : 0;
+            const profitClass = totalProfit >= 0 ? 'price-up' : 'price-down';
+            const profitSign = totalProfit >= 0 ? '+' : '';
+
+            document.getElementById('simTotalValue').textContent = totalValue.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('simTotalValue').className = `text-lg font-bold font-mono ${profitClass}`;
+
+            document.getElementById('simTotalProfit').textContent = `${profitSign}${totalProfit.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${profitSign}${totalProfitPct.toFixed(2)}%)`;
+            document.getElementById('simTotalProfit').className = `text-lg font-bold font-mono ${profitClass}`;
+
+            const cash = simConfig.capital - totalCost;
+            document.getElementById('simCash').textContent = cash.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            const usRatio = totalValue > 0 ? (usValue / totalValue * 100) : 0;
+            const goldRatio = totalValue > 0 ? (goldValue / totalValue * 100) : 0;
+            document.getElementById('simUsRatio').textContent = usRatio.toFixed(1) + '%';
+            document.getElementById('simUsBar').style.width = usRatio + '%';
+            document.getElementById('simGoldRatio').textContent = goldRatio.toFixed(1) + '%';
+            document.getElementById('simGoldBar').style.width = goldRatio + '%';
+
+            const usAvgGszzl = usCount > 0 ? (usGszzlSum / usCount) : 0;
+            const goldAvgGszzl = goldCount > 0 ? (goldGszzlSum / goldCount) : 0;
+            generateSimAdvice(usAvgGszzl, goldAvgGszzl, usRatio, goldRatio, cash, totalValue);
+        }
+
+        function generateSimAdvice(usAvgGszzl, goldAvgGszzl, usRatio, goldRatio, cash, totalValue) {
+            const adviceEl = document.getElementById('simAdvice');
+
+            let trendSignal = '';
+            let rebalanceSignal = '';
+            let actionSignal = '';
+            let detailText = '';
+
+            const diff = usAvgGszzl - goldAvgGszzl;
+            const threshold = 0.5;
+
+            if (diff > threshold) {
+                trendSignal = '美股今日强势';
+                detailText += `美股基金平均估算涨幅 <span class="text-blue-400 font-mono">+${usAvgGszzl.toFixed(2)}%</span>，跑赢黄金基金 <span class="text-yellow-400 font-mono">${goldAvgGszzl.toFixed(2)}%</span>。`;
+            } else if (diff < -threshold) {
+                trendSignal = '黄金今日强势';
+                detailText += `黄金基金平均估算涨幅 <span class="text-yellow-400 font-mono">+${goldAvgGszzl.toFixed(2)}%</span>，跑赢美股基金 <span class="text-blue-400 font-mono">${usAvgGszzl.toFixed(2)}%</span>。`;
+            } else {
+                trendSignal = '双方势均力敌';
+                detailText += `美股基金平均估算涨幅 <span class="text-blue-400 font-mono">${usAvgGszzl.toFixed(2)}%</span>，黄金基金 <span class="text-yellow-400 font-mono">${goldAvgGszzl.toFixed(2)}%</span>，差异不大。`;
+            }
+
+            const targetUs = 50;
+            const deviationUs = usRatio - targetUs;
+
+            if (Math.abs(deviationUs) > 10) {
+                if (deviationUs > 0) {
+                    rebalanceSignal = `美股仓位偏高 (${usRatio.toFixed(1)}%)，建议向黄金再平衡`;
+                } else {
+                    rebalanceSignal = `黄金仓位偏高 (${goldRatio.toFixed(1)}%)，建议向美股再平衡`;
+                }
+            } else {
+                rebalanceSignal = '仓位分配较为均衡';
+            }
+
+            if (cash > 5000) {
+                if (diff > threshold && deviationUs < 15) {
+                    actionSignal = '建议：动用现金增持美股基金';
+                } else if (diff < -threshold && deviationGold < 15) {
+                    actionSignal = '建议：动用现金增持黄金基金';
+                } else {
+                    actionSignal = '建议：继续持有观望，等待更明确信号';
+                }
+            } else {
+                if (diff > threshold && deviationUs > 10) {
+                    actionSignal = '建议：减持部分美股基金，增持黄金基金（再平衡）';
+                } else if (diff < -threshold && goldRatio > 60) {
+                    actionSignal = '建议：减持部分黄金基金，增持美股基金（再平衡）';
+                } else {
+                    actionSignal = '建议：当前仓位合理，继续持有';
+                }
+            }
+
+            const actionColor = actionSignal.includes('增持') ? 'text-green-400' : (actionSignal.includes('减持') ? 'text-yellow-400' : 'text-slate-300');
+
+            adviceEl.innerHTML = `
+                <div class="p-3 glass-light rounded-lg">
+                    <div class="text-sm font-medium mb-2">趋势判断</div>
+                    <div class="text-xs text-slate-400">${detailText}</div>
+                </div>
+                <div class="p-3 glass-light rounded-lg">
+                    <div class="text-sm font-medium mb-2">仓位诊断</div>
+                    <div class="text-xs text-slate-400">${rebalanceSignal}。现金余额: <span class="font-mono text-slate-200">${cash.toFixed(2)}</span> 元。</div>
+                </div>
+                <div class="p-3 glass-light rounded-lg border border-yellow-500/20">
+                    <div class="text-sm font-medium mb-2 ${actionColor}">操作建议</div>
+                    <div class="text-xs ${actionColor} font-medium">${actionSignal}</div>
+                    <div class="text-xs text-slate-500 mt-1">提示：以上为基于当日估算数据的模拟建议，不构成真实投资建议。</div>
+                </div>
+            `;
+        }
+
         // Auto load on page load
         document.addEventListener('DOMContentLoaded', function() {
+            renderSimConfig();
             setTimeout(loadFunds, 1000);
             // Auto refresh every 60 seconds during trading hours
             setInterval(() => {
