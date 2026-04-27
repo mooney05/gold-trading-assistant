@@ -360,6 +360,43 @@
                     </div>
                 </div>
 
+                <!-- Fund Valuation -->
+                <div class="glass rounded-xl p-5" id="fundSection">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-slate-200">我的基金</h3>
+                        <span class="text-xs text-slate-500">数据来源: 天天基金</span>
+                    </div>
+
+                    <!-- Fund Input Form -->
+                    <div class="mb-4 p-3 glass-light rounded-lg">
+                        <div class="text-xs text-slate-400 mb-2">添加基金（代码:份额）</div>
+                        <div class="flex space-x-2">
+                            <input type="text" id="fundInput" placeholder="如: 009504:1000" class="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none" value="009504:1000,000218:500,002963:800">
+                            <button onclick="loadFunds()" class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-xs rounded-lg transition-colors">
+                                刷新
+                            </button>
+                        </div>
+                        <div class="text-xs text-slate-600 mt-1">格式: 基金代码:份额，多个用逗号分隔</div>
+                    </div>
+
+                    <!-- Fund List -->
+                    <div id="fundList" class="space-y-3">
+                        <div class="text-center py-4 text-slate-500 text-xs">点击刷新加载基金数据</div>
+                    </div>
+
+                    <!-- Total Summary -->
+                    <div id="fundSummary" class="mt-4 pt-3 border-t border-slate-700/50 hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-400">总预估收益</span>
+                            <span id="totalProfit" class="text-lg font-bold font-mono">--</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-xs text-slate-500">总持仓市值</span>
+                            <span id="totalValue" class="text-xs font-mono text-slate-300">--</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Key Levels -->
                 <div class="glass rounded-xl p-5">
                     <h3 class="font-semibold text-slate-200 mb-4">关键价位</h3>
@@ -419,6 +456,177 @@
         
         updateTime();
         setInterval(updateTime, 1000);
+
+        // Fund valuation functionality
+        let fundDataCache = {};
+        let pendingFunds = 0;
+
+        // Global JSONP callback
+        window.jsonpgz = function(data) {
+            if (data && data.fundcode) {
+                fundDataCache[data.fundcode] = data;
+            }
+            pendingFunds--;
+            if (pendingFunds <= 0) {
+                renderFunds();
+            }
+        };
+
+        function parseFundInput(input) {
+            const funds = [];
+            const parts = input.split(',');
+            for (const part of parts) {
+                const trimmed = part.trim();
+                if (!trimmed) continue;
+                const [code, shares] = trimmed.split(':');
+                if (code) {
+                    funds.push({
+                        code: code.trim(),
+                        shares: parseFloat(shares) || 0
+                    });
+                }
+            }
+            return funds;
+        }
+
+        function loadFunds() {
+            const input = document.getElementById('fundInput').value;
+            const funds = parseFundInput(input);
+            
+            if (funds.length === 0) {
+                document.getElementById('fundList').innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">请输入基金代码</div>';
+                return;
+            }
+
+            fundDataCache = {};
+            pendingFunds = funds.length;
+            
+            document.getElementById('fundList').innerHTML = '<div class="text-center py-4 text-slate-500 text-xs">加载中...</div>';
+            document.getElementById('fundSummary').classList.add('hidden');
+
+            // Load each fund via JSONP
+            for (const fund of funds) {
+                const script = document.createElement('script');
+                script.src = `https://fundgz.1234567.com.cn/js/${fund.code}.js?t=${Date.now()}`;
+                script.onerror = function() {
+                    pendingFunds--;
+                    fundDataCache[fund.code] = { error: true, fundcode: fund.code };
+                    if (pendingFunds <= 0) renderFunds();
+                };
+                document.head.appendChild(script);
+            }
+
+            // Store shares for rendering
+            window.fundShares = {};
+            for (const fund of funds) {
+                window.fundShares[fund.code] = fund.shares;
+            }
+
+            // Timeout fallback
+            setTimeout(() => {
+                if (pendingFunds > 0) {
+                    pendingFunds = 0;
+                    renderFunds();
+                }
+            }, 5000);
+        }
+
+        function renderFunds() {
+            const listEl = document.getElementById('fundList');
+            const funds = parseFundInput(document.getElementById('fundInput').value);
+            
+            let html = '';
+            let totalProfit = 0;
+            let totalValue = 0;
+            let validCount = 0;
+
+            for (const fund of funds) {
+                const data = fundDataCache[fund.code];
+                const shares = fund.shares;
+
+                if (!data || data.error) {
+                    html += `
+                        <div class="p-3 glass-light rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium">${fund.code}</span>
+                                <span class="text-xs text-red-400">获取失败</span>
+                            </div>
+                        </div>
+                    `;
+                    continue;
+                }
+
+                const name = data.name || fund.code;
+                const dwjz = parseFloat(data.dwjz) || 0;  // 单位净值
+                const gsz = parseFloat(data.gsz) || 0;    // 估算净值
+                const gszzl = parseFloat(data.gszzl) || 0; // 估算涨跌幅
+                const gztime = data.gztime || '--';
+
+                const cost = dwjz * shares;
+                const value = gsz * shares;
+                const profit = value - cost;
+                const profitClass = profit >= 0 ? 'price-up' : 'price-down';
+                const profitSign = profit >= 0 ? '+' : '';
+                const gszzlClass = gszzl >= 0 ? 'price-up' : 'price-down';
+                const gszzlSign = gszzl >= 0 ? '+' : '';
+
+                if (shares > 0) {
+                    totalProfit += profit;
+                    totalValue += value;
+                    validCount++;
+                }
+
+                html += `
+                    <div class="p-3 glass-light rounded-lg">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium truncate" title="${name}">${name}</span>
+                            <span class="text-xs text-slate-500">${fund.code}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs text-slate-400">估值: <span class="font-mono text-slate-200">${gsz.toFixed(4)}</span></span>
+                            <span class="text-xs ${gszzlClass} font-medium">${gszzlSign}${gszzl.toFixed(2)}%</span>
+                        </div>
+                        ${shares > 0 ? `
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-500">份额: ${shares}</span>
+                            <span class="${profitClass} font-mono">${profitSign}${profit.toFixed(2)}</span>
+                        </div>
+                        ` : ''}
+                        <div class="text-xs text-slate-600 mt-1">更新时间: ${gztime}</div>
+                    </div>
+                `;
+            }
+
+            listEl.innerHTML = html;
+
+            // Update summary
+            if (validCount > 0) {
+                const summaryEl = document.getElementById('fundSummary');
+                const profitEl = document.getElementById('totalProfit');
+                const valueEl = document.getElementById('totalValue');
+                
+                const profitClass = totalProfit >= 0 ? 'price-up' : 'price-down';
+                const profitSign = totalProfit >= 0 ? '+' : '';
+                
+                profitEl.className = `text-lg font-bold font-mono ${profitClass}`;
+                profitEl.textContent = `${profitSign}${totalProfit.toFixed(2)}`;
+                valueEl.textContent = `${totalValue.toFixed(2)}`;
+                summaryEl.classList.remove('hidden');
+            }
+        }
+
+        // Auto load on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadFunds, 1000);
+            // Auto refresh every 60 seconds during trading hours
+            setInterval(() => {
+                const hour = new Date().getHours();
+                // Trading hours: 9:30-11:30, 13:00-15:00
+                if ((hour >= 9 && hour < 12) || (hour >= 13 && hour < 16)) {
+                    loadFunds();
+                }
+            }, 60000);
+        });
     </script>
 </body>
 </html>
