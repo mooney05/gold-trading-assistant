@@ -119,10 +119,8 @@
                     <span class="text-xl font-bold gold-text">黄金交易大师</span>
                 </div>
                 <nav class="hidden md:flex items-center space-x-2">
-                    <a href="#" class="px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all">首页</a>
-                    <a href="#usmarket" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">美股市场</a>
-                    <a href="#fundSection" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">我的基金</a>
-                    <a href="#analysis" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">技术分析</a>
+                    <button id="navHome" onclick="switchPage('home')" class="px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all">首页</button>
+                    <button id="navFund" onclick="switchPage('fund')" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all">我的基金</button>
                 </nav>
                 <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 rounded-full bg-green-500 pulse-gold"></div>
@@ -154,7 +152,7 @@
         </script>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 py-6">
+    <main id="homePage" class="max-w-7xl mx-auto px-4 py-6">
         <!-- Market Overview -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <!-- XAU/USD -->
@@ -337,43 +335,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Fund Valuation -->
-                <div class="glass rounded-xl p-5" id="fundSection">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold text-slate-200">我的基金</h3>
-                        <span class="text-xs text-slate-500">数据来源: 天天基金</span>
-                    </div>
-
-                    <!-- Fund Input Form -->
-                    <div class="mb-4 p-3 glass-light rounded-lg">
-                        <div class="text-xs text-slate-400 mb-2">添加基金（代码:份额）</div>
-                        <div class="flex space-x-2">
-                            <input type="text" id="fundInput" placeholder="如: 009504:1000" class="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none" value="009504:1000,000218:500,002963:800">
-                            <button onclick="loadFunds()" class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-xs rounded-lg transition-colors">
-                                刷新
-                            </button>
-                        </div>
-                        <div class="text-xs text-slate-600 mt-1">格式: 基金代码:份额，多个用逗号分隔</div>
-                    </div>
-
-                    <!-- Fund List -->
-                    <div id="fundList" class="space-y-3">
-                        <div class="text-center py-4 text-slate-500 text-xs">点击刷新加载基金数据</div>
-                    </div>
-
-                    <!-- Total Summary -->
-                    <div id="fundSummary" class="mt-4 pt-3 border-t border-slate-700/50 hidden">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-slate-400">总预估收益</span>
-                            <span id="totalProfit" class="text-lg font-bold font-mono">--</span>
-                        </div>
-                        <div class="flex items-center justify-between mt-1">
-                            <span class="text-xs text-slate-500">总持仓市值</span>
-                            <span id="totalValue" class="text-xs font-mono text-slate-300">--</span>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Technical Analysis Widget -->
                 <div id="analysis" class="glass rounded-xl p-5">
                     <h3 class="font-semibold text-slate-200 mb-4">技术分析</h3>
@@ -516,6 +477,47 @@
         </div>
     </main>
 
+    <!-- Fund Page -->
+    <main id="fundPage" class="max-w-7xl mx-auto px-4 py-6" style="display:none">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass rounded-xl p-5" id="fundSection">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-slate-200">我的基金</h3>
+                    <span class="text-xs text-slate-500">数据来源: 天天基金</span>
+                </div>
+
+                <!-- Fund Input Form -->
+                <div class="mb-4 p-3 glass-light rounded-lg">
+                    <div class="text-xs text-slate-400 mb-2">添加基金（代码:份额）</div>
+                    <div class="flex space-x-2">
+                        <input type="text" id="fundInput" placeholder="如: 009504:1000" class="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none" value="009504:1000,000218:500,002963:800">
+                        <button onclick="loadFunds()" class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-xs rounded-lg transition-colors">
+                            刷新
+                        </button>
+                    </div>
+                    <div class="text-xs text-slate-600 mt-1">格式: 基金代码:份额，多个用逗号分隔</div>
+                </div>
+
+                <!-- Fund List -->
+                <div id="fundList" class="space-y-3">
+                    <div class="text-center py-4 text-slate-500 text-xs">点击刷新加载基金数据</div>
+                </div>
+
+                <!-- Total Summary -->
+                <div id="fundSummary" class="mt-4 pt-3 border-t border-slate-700/50 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-400">总预估收益</span>
+                        <span id="totalProfit" class="text-lg font-bold font-mono">--</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-xs text-slate-500">总持仓市值</span>
+                        <span id="totalValue" class="text-xs font-mono text-slate-300">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
     <!-- Footer -->
     <footer class="mt-12 py-6 border-t border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
@@ -525,6 +527,27 @@
     </footer>
 
     <script>
+        // Page switching
+        function switchPage(page) {
+            const homePage = document.getElementById('homePage');
+            const fundPage = document.getElementById('fundPage');
+            const navHome = document.getElementById('navHome');
+            const navFund = document.getElementById('navFund');
+
+            if (page === 'home') {
+                homePage.style.display = 'block';
+                fundPage.style.display = 'none';
+                navHome.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all';
+                navFund.className = 'px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all';
+            } else if (page === 'fund') {
+                homePage.style.display = 'none';
+                fundPage.style.display = 'block';
+                navHome.className = 'px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition-all';
+                navFund.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 transition-all';
+                setTimeout(loadFunds, 300);
+            }
+        }
+
         // Update time display
         function updateTime() {
             const now = new Date();
