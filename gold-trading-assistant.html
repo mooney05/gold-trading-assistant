@@ -77,7 +77,6 @@
                         <span class="text-slate-400 text-sm">现货黄金 XAU/USD</span>
                         <span class="ml-2 text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">国际</span>
                     </div>
-                    <a href="https://cn.tradingview.com/symbols/XAUUSD/" target="_blank" class="text-xs text-slate-500 hover:text-yellow-400 transition-colors">查看完整图表 →</a>
                 </div>
                 <div class="flex items-end justify-between mb-3">
                     <div>
@@ -104,7 +103,7 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-3 text-xs text-slate-500">
-                    <span>数据来源: 新浪财经</span>
+                    <span>数据来源: 英为财情</span>
                     <span id="xauUpdateTime">更新时间: --</span>
                 </div>
             </div>
@@ -258,7 +257,7 @@
                             </div>
                         </div>
                         <div class="flex items-center justify-between mt-2 text-xs text-slate-500">
-                            <span>数据来源: 新浪财经</span>
+                            <span>数据来源: 东方财富</span>
                             <span id="spxTime">--</span>
                         </div>
                     </div>
@@ -293,7 +292,7 @@
                             </div>
                         </div>
                         <div class="flex items-center justify-between mt-2 text-xs text-slate-500">
-                            <span>数据来源: 新浪财经</span>
+                            <span>数据来源: 东方财富</span>
                             <span id="ixicTime">--</span>
                         </div>
                     </div>
@@ -463,7 +462,7 @@
 
     <footer class="mt-12 py-6 border-t border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
-            <p>数据来源于 <span class="text-yellow-500">新浪财经</span> / <span class="text-yellow-500">东方财富</span> / <span class="text-yellow-500">天天基金</span> | 投资有风险，入市需谨慎</p>
+            <p>数据来源于 <span class="text-yellow-500">东方财富</span> / <span class="text-yellow-500">天天基金</span> | 投资有风险，入市需谨慎</p>
             <p class="mt-1">黄金交易大师 © 2026</p>
         </div>
     </footer>
@@ -502,108 +501,82 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // Sina Finance API (for gold and US indices)
-        function fetchSinaQuotes(codes, callback) {
-            const script = document.createElement('script');
-            script.src = 'https://hq.sinajs.cn/list=' + codes.join(',');
-            script.onload = function() {
-                const result = {};
-                for (const code of codes) {
-                    const varName = code.startsWith('hf_') ? 'hq_str_hf_' + code.slice(3) : 'hq_str_' + code;
-                    const data = window[varName];
-                    if (data && data.length > 0) {
-                        result[code] = data.split(',');
-                    }
-                }
-                callback(result);
-            };
-            script.onerror = function() { callback({}); };
-            document.head.appendChild(script);
-        }
+        // Eastmoney API (for US indices)
+        async function refreshUSIndices() {
+            try {
+                const [spxRes, ndxRes] = await Promise.all([
+                    fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=100.SPX&fields=f43,f44,f45,f46,f47,f48,f57,f58,f60,f170'),
+                    fetch('https://push2.eastmoney.com/api/qt/stock/get?secid=100.NDX&fields=f43,f44,f45,f46,f47,f48,f57,f58,f60,f170')
+                ]);
+                const spxData = await spxRes.json();
+                const ndxData = await ndxRes.json();
 
-        function refreshXAU() {
-            fetchSinaQuotes(['hf_XAU'], function(data) {
-                const d = data['hf_XAU'];
-                if (!d || d.length < 14) return;
-                const price = parseFloat(d[0]).toFixed(2);
-                const bid = parseFloat(d[1]).toFixed(2);
-                const ask = parseFloat(d[2]).toFixed(2);
-                const open = parseFloat(d[3]).toFixed(2);
-                const high = parseFloat(d[4]).toFixed(2);
-                const low = parseFloat(d[5]).toFixed(2);
-                const timeStr = d[6];
-                const prev = parseFloat(d[7]).toFixed(2);
-                const vol = d[8];
-                const change = (price - prev).toFixed(2);
-                const changePct = prev > 0 ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
-                const sign = change >= 0 ? '+' : '';
-                const colorClass = change >= 0 ? 'price-up' : 'price-down';
-
-                document.getElementById('xauPrice').textContent = price;
-                document.getElementById('xauChange').textContent = sign + change;
-                document.getElementById('xauChange').className = 'text-sm font-mono ' + colorClass;
-                document.getElementById('xauPercent').textContent = sign + changePct + '%';
-                document.getElementById('xauPercent').className = 'text-xs ' + colorClass;
-                document.getElementById('xauOpen').textContent = open;
-                document.getElementById('xauHigh').textContent = high;
-                document.getElementById('xauLow').textContent = low;
-                document.getElementById('xauVol').textContent = vol;
-                document.getElementById('xauPrev').textContent = prev;
-                document.getElementById('xauBid').textContent = bid;
-                document.getElementById('xauAsk').textContent = ask;
-                document.getElementById('xauUpdateTime').textContent = '更新时间: ' + timeStr;
-                document.getElementById('keyPrice').textContent = price;
-            });
-        }
-
-        function refreshUSIndices() {
-            fetchSinaQuotes(['gb_inx', 'gb_ixic'], function(data) {
-                const spx = data['gb_inx'];
-                if (spx && spx.length > 8) {
-                    const price = parseFloat(spx[1]).toFixed(2);
-                    const pct = parseFloat(spx[2]).toFixed(2);
-                    const change = parseFloat(spx[4]).toFixed(2);
-                    const open = parseFloat(spx[5]).toFixed(2);
-                    const high = parseFloat(spx[6]).toFixed(2);
-                    const low = parseFloat(spx[7]).toFixed(2);
-                    const timeStr = spx[3];
-                    const sign = change >= 0 ? '+' : '';
-                    const colorClass = change >= 0 ? 'price-up' : 'price-down';
+                if (spxData && spxData.data) {
+                    const d = spxData.data;
+                    const price = (d.f43 / 100).toFixed(2);
+                    const high = (d.f44 / 100).toFixed(2);
+                    const low = (d.f45 / 100).toFixed(2);
+                    const open = (d.f46 / 100).toFixed(2);
+                    const prev = (d.f60 / 100).toFixed(2);
+                    const change = (price - prev).toFixed(2);
+                    const changePct = prev > 0 ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+                    const sign = parseFloat(change) >= 0 ? '+' : '';
+                    const colorClass = parseFloat(change) >= 0 ? 'price-up' : 'price-down';
 
                     document.getElementById('spxPrice').textContent = price;
                     document.getElementById('spxChange').textContent = sign + change;
                     document.getElementById('spxChange').className = 'text-sm font-mono ' + colorClass;
-                    document.getElementById('spxPercent').textContent = sign + pct + '%';
+                    document.getElementById('spxPercent').textContent = sign + changePct + '%';
                     document.getElementById('spxPercent').className = 'text-xs ' + colorClass;
                     document.getElementById('spxOpen').textContent = open;
                     document.getElementById('spxHigh').textContent = high;
                     document.getElementById('spxLow').textContent = low;
-                    document.getElementById('spxTime').textContent = timeStr;
+                    document.getElementById('spxTime').textContent = new Date().toLocaleTimeString('zh-CN');
                 }
 
-                const ixic = data['gb_ixic'];
-                if (ixic && ixic.length > 8) {
-                    const price = parseFloat(ixic[1]).toFixed(2);
-                    const pct = parseFloat(ixic[2]).toFixed(2);
-                    const change = parseFloat(ixic[4]).toFixed(2);
-                    const open = parseFloat(ixic[5]).toFixed(2);
-                    const high = parseFloat(ixic[6]).toFixed(2);
-                    const low = parseFloat(ixic[7]).toFixed(2);
-                    const timeStr = ixic[3];
-                    const sign = change >= 0 ? '+' : '';
-                    const colorClass = change >= 0 ? 'price-up' : 'price-down';
+                if (ndxData && ndxData.data) {
+                    const d = ndxData.data;
+                    const price = (d.f43 / 100).toFixed(2);
+                    const high = (d.f44 / 100).toFixed(2);
+                    const low = (d.f45 / 100).toFixed(2);
+                    const open = (d.f46 / 100).toFixed(2);
+                    const prev = (d.f60 / 100).toFixed(2);
+                    const change = (price - prev).toFixed(2);
+                    const changePct = prev > 0 ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+                    const sign = parseFloat(change) >= 0 ? '+' : '';
+                    const colorClass = parseFloat(change) >= 0 ? 'price-up' : 'price-down';
 
                     document.getElementById('ixicPrice').textContent = price;
                     document.getElementById('ixicChange').textContent = sign + change;
                     document.getElementById('ixicChange').className = 'text-sm font-mono ' + colorClass;
-                    document.getElementById('ixicPercent').textContent = sign + pct + '%';
+                    document.getElementById('ixicPercent').textContent = sign + changePct + '%';
                     document.getElementById('ixicPercent').className = 'text-xs ' + colorClass;
                     document.getElementById('ixicOpen').textContent = open;
                     document.getElementById('ixicHigh').textContent = high;
                     document.getElementById('ixicLow').textContent = low;
-                    document.getElementById('ixicTime').textContent = timeStr;
+                    document.getElementById('ixicTime').textContent = new Date().toLocaleTimeString('zh-CN');
                 }
-            });
+            } catch (e) {
+                console.error('Failed to fetch US indices:', e);
+            }
+        }
+
+        function refreshXAU() {
+            document.getElementById('xauPrice').textContent = 'N/A';
+            document.getElementById('xauPrice').className = 'text-3xl font-bold font-mono text-slate-500';
+            document.getElementById('xauChange').textContent = '国际金价数据暂不可用';
+            document.getElementById('xauChange').className = 'text-sm font-mono text-slate-500';
+            document.getElementById('xauPercent').textContent = '请参考右侧 AU9999 国内金价';
+            document.getElementById('xauPercent').className = 'text-xs text-yellow-400';
+            document.getElementById('xauOpen').textContent = '--';
+            document.getElementById('xauHigh').textContent = '--';
+            document.getElementById('xauLow').textContent = '--';
+            document.getElementById('xauVol').textContent = '--';
+            document.getElementById('xauPrev').textContent = '--';
+            document.getElementById('xauBid').textContent = '--';
+            document.getElementById('xauAsk').textContent = '--';
+            document.getElementById('xauUpdateTime').textContent = '新浪财经 API 已限制访问';
+            document.getElementById('keyPrice').textContent = 'N/A';
         }
 
         // AU9999 data fetch (every 5 minutes)
